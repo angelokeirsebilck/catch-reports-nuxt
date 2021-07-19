@@ -1,8 +1,8 @@
 <template>
-  <v-app>
+  <div class="text-base">
     <LayoutTheHeader />
     <Nuxt />
-  </v-app>
+  </div>
 </template>
 
 <script></script>

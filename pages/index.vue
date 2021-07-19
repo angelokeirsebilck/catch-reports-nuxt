@@ -18,10 +18,12 @@
     <NuxtLink
       to="/add-report"
       class="
+        white--text
         bg-green-600
         hover:bg-green-300
         h-16
         text-white
+        hover:text-black
         font-medium
         uppercase
         transition-colors

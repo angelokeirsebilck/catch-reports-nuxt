@@ -35,18 +35,18 @@ export default {
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     // https://go.nuxtjs.dev/tailwindcss
-    [
-      '@nuxtjs/vuetify',
-      {
-        theme: {
-          themes: {
-            light: {
-              primary: 'green',
-            },
-          },
-        },
-      },
-    ],
+    // [
+    //   '@nuxtjs/vuetify',
+    //   {
+    //     theme: {
+    //       themes: {
+    //         light: {
+    //           primary: '#10B981',
+    //         },
+    //       },
+    //     },
+    //   },
+    // ],
     '@nuxtjs/tailwindcss',
   ],
 
