@@ -1,9 +1,8 @@
 <template>
-  <div class="text-base">
-    <button
+  <div class="max-w-screen-xl mx-auto">
+    <!-- <button
       class="
-        bg-green-600
-        hover:bg-green-300
+        bg-primary-default
         h-16
         text-white
         font-medium
@@ -14,11 +13,10 @@
       @click="logout"
     >
       Logout
-    </button>
-    <NuxtLink
+    </button> -->
+    <!-- <NuxtLink
       to="/add-report"
       class="
-        white--text
         bg-green-600
         hover:bg-green-300
         h-16
@@ -30,12 +28,13 @@
         w-full
       "
       >Add Report</NuxtLink
-    >
+    > -->
   </div>
 </template>
 
 <script>
 export default {
+  middleware: 'auth',
   methods: {
     logout() {
       this.$fire.auth
@@ -49,5 +48,8 @@ export default {
         })
     },
   },
+  // created() {
+  //   this.$store.dispatch('setAppLoaded', true)
+  // },
 }
 </script>

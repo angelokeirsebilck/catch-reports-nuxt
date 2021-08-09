@@ -27,6 +27,7 @@ export default {
   plugins: [
     { src: '~plugins/vuelidate.js' },
     { src: '~/plugins/vee-validate.js' },
+    // { src: '~/plugins/vue-loading-overlay.js' },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -35,18 +36,26 @@ export default {
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     // https://go.nuxtjs.dev/tailwindcss
-    // [
-    //   '@nuxtjs/vuetify',
-    //   {
-    //     theme: {
-    //       themes: {
-    //         light: {
-    //           primary: '#10B981',
-    //         },
-    //       },
-    //     },
-    //   },
-    // ],
+    [
+      '@nuxtjs/vuetify',
+      {
+        theme: {
+          themes: {
+            light: {
+              primary: {
+                base: '#10B981',
+                lighten1: '#6EE7B7',
+              },
+              error: '#b71c1c',
+              test: '#3B82F6',
+            },
+          },
+        },
+        breakpoint: {
+          mobileBreakpoint: 'xl', // This is equivalent to a value of 960
+        },
+      },
+    ],
     '@nuxtjs/tailwindcss',
   ],
 
@@ -88,5 +97,9 @@ export default {
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     transpile: ['vee-validate/dist/rules'],
+  },
+  vuetify: {
+    customVariables: ['~/assets/css/variables.scss'],
+    treeShake: true,
   },
 }

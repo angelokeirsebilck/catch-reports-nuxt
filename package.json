@@ -19,6 +19,7 @@
     "sass": "^1.35.2",
     "sass-loader": "10",
     "vee-validate": "^3.4.10",
+    "vue-loading-overlay": "^4.0.3",
     "vuelidate": "^0.7.6"
   },
   "devDependencies": {

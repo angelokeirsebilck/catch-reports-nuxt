@@ -1,38 +1,44 @@
 <template>
-  <div class="text-base">
+  <div class="text-base max-w-xl px-4 mt-5 h-auto self-center w-full">
     <ValidationObserver v-slot="{ handleSubmit }">
       <form
         action=""
         @submit.prevent="handleSubmit(submitForm)"
-        class="flex flex-col items-center max-w-md mx-auto"
+        class="flex flex-col items-center w-full"
       >
-        <div class="flex-col flex w-full mt-5">
-          <label for="email">Email</label>
+        <div class="flex-col flex w-full mt-2">
           <ValidationProvider
             rules="required|email"
-            v-slot="{ classes, errors }"
+            v-slot="{ errors }"
+            mode="eager"
           >
-            <input v-model.trim="email" type="text" :class="classes" />
-            <div :class="errorStyle">
-              {{ errors[0] }}
-            </div>
+            <v-text-field
+              v-model.trim="email"
+              label="E-mail"
+              :error-messages="errors"
+              outlined
+            ></v-text-field>
           </ValidationProvider>
         </div>
-        <div class="flex-col flex w-full mt-5">
-          <label for="password">Password</label>
-          <ValidationProvider rules="required" v-slot="{ classes, errors }">
-            <input v-model.trim="password" type="password" :class="classes" />
-            <div :class="errorStyle">
-              {{ errors[0] }}
-            </div>
+        <div class="flex-col flex w-full mt-2">
+          <ValidationProvider rules="required" v-slot="{ errors }" mode="eager">
+            <v-text-field
+              :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+              :type="show ? 'text' : 'password'"
+              v-model.trim="password"
+              label="Paswoord"
+              :error-messages="errors"
+              outlined
+              @click:append="show = !show"
+            ></v-text-field>
           </ValidationProvider>
         </div>
-        <div class="flex-col flex w-full mt-5">
+        <div class="flex-col flex w-full mt-2">
           <button
             class="
-              bg-green-600
-              hover:bg-green-300
-              h-16
+              bg-primary-default
+              hover:bg-primary-lighter1
+              h-5
               text-white
               font-medium
               uppercase
@@ -51,17 +57,26 @@
       </p>
     </ValidationObserver>
 
-    <div class="max-w-md mx-auto mt-8">
+    <div class="mt-3">
       <p>
         Nog niet registreerd?
-        <NuxtLink class="text-green-600" to="/register">Registreer</NuxtLink>
+        <v-hover v-slot="{ hover }">
+          <NuxtLink
+            class="text-green-600 duration-300"
+            to="/register"
+            :class="[hover ? linkHoverClass : '']"
+            >Registreer</NuxtLink
+          >
+        </v-hover>
       </p>
     </div>
   </div>
 </template>
 
+<style></style>
 <script>
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
+import FirebaseErrors from '../../utils/firebase/firebaseErrors'
 
 export default {
   components: {
@@ -74,7 +89,13 @@ export default {
       password: '',
       errorStyle: 'text-red-600',
       error: null,
+      show: false,
     }
+  },
+  computed: {
+    linkHoverClass() {
+      return 'primary--text text--lighten-1'
+    },
   },
   methods: {
     async submitForm() {

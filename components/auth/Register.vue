@@ -1,71 +1,72 @@
 <template>
-  <div class="mx-auto text-base">
+  <div class="text-base max-w-xl mx-auto px-4 mt-5 h-auto self-center w-full">
     <ValidationObserver v-slot="{ handleSubmit }">
-      <form
+      <v-form
         action=""
         @submit.prevent="handleSubmit(submitForm)"
-        class="flex flex-col items-center max-w-md mx-auto"
+        class="flex flex-col items-center w-full"
       >
-        <div class="flex-col flex w-full mt-5">
-          <label for="name">Naam</label>
-          <ValidationProvider rules="required" v-slot="{ classes, errors }">
-            <input v-model.trim="name" type="text" :class="classes" />
-            <div :class="errorStyle">
-              {{ errors[0] }}
-            </div>
+        <div class="flex-col flex w-full mt-2">
+          <ValidationProvider rules="required" v-slot="{ errors }" mode="eager">
+            <v-text-field
+              v-model.trim="name"
+              label="Naam"
+              :error-messages="errors"
+              outlined
+            ></v-text-field>
           </ValidationProvider>
         </div>
-        <div class="flex-col flex w-full mt-5">
-          <label for="email">Email</label>
+        <div class="flex-col flex w-full mt-2">
           <ValidationProvider
             rules="required|email"
-            v-slot="{ classes, errors }"
+            v-slot="{ errors }"
+            mode="eager"
           >
-            <input v-model.trim="email" type="text" :class="classes" />
-            <div :class="errorStyle">
-              {{ errors[0] }}
-            </div>
+            <v-text-field
+              v-model.trim="email"
+              label="E-mail"
+              :error-messages="errors"
+              outlined
+            ></v-text-field>
           </ValidationProvider>
         </div>
-        <div class="flex-col flex w-full mt-5">
-          <label for="password">Paswoord</label>
+        <div class="flex-col flex w-full mt-2">
           <ValidationProvider
             rules="required"
-            vid="confirmation"
-            v-slot="{ classes, errors }"
+            vid="password"
+            v-slot="{ errors }"
+            mode="eager"
           >
-            <input
+            <v-text-field
+              type="password"
               v-model.trim="password.password"
-              type="password"
-              :class="classes"
-            />
-            <div :class="errorStyle">
-              {{ errors[0] }}
-            </div>
+              label="Paswoord"
+              :error-messages="errors"
+              outlined
+            ></v-text-field>
           </ValidationProvider>
         </div>
-        <div class="flex-col flex w-full mt-5">
-          <label for="password">Bevestig paswoord</label>
+        <div class="flex-col flex w-full mt-2">
           <ValidationProvider
-            rules="required|confirmed:confirmation"
-            v-slot="{ classes, errors }"
+            rules="required|confirmed:password"
+            v-slot="{ errors }"
+            mode="eager"
           >
-            <input
-              v-model.trim="password.confirm"
+            <v-text-field
               type="password"
-              :class="classes"
-            />
-            <div :class="errorStyle">
-              {{ errors[0] }}
-            </div>
+              v-model.trim="password.confirm"
+              label="Herhaal paswoord"
+              :error-messages="errors"
+              outlined
+            ></v-text-field>
           </ValidationProvider>
         </div>
-        <div class="flex-col flex w-full mt-5">
+        <div class="flex-col flex w-full mt-2">
           <button
             class="
-              bg-green-600
-              hover:bg-green-300
-              h-16
+              bg-primary-default
+              hover:bg-primary-lighter1
+              h-5
               text-white
               font-medium
               uppercase
@@ -75,7 +76,7 @@
             Registreer
           </button>
         </div>
-      </form>
+      </v-form>
       <p
         v-if="error != null"
         :class="[errorStyle, 'mt-4 text-left max-w-md mx-auto']"
@@ -86,7 +87,14 @@
     <div class="max-w-md mx-auto mt-8">
       <p>
         Al geregistreerd?
-        <NuxtLink class="text-green-600" to="/login">Login</NuxtLink>
+        <v-hover v-slot="{ hover }">
+          <NuxtLink
+            class="text-green-600 duration-300"
+            to="/login"
+            :class="[hover ? linkHoverClass : '']"
+            >Login</NuxtLink
+          >
+        </v-hover>
       </p>
     </div>
   </div>
@@ -112,6 +120,11 @@ export default {
       errorStyle: 'text-red-600',
       error: null,
     }
+  },
+  computed: {
+    linkHoverClass() {
+      return 'primary--text text--lighten-1'
+    },
   },
   methods: {
     async submitForm() {
