@@ -74,7 +74,7 @@
             <NuxtLink
               nuxt
               to="/"
-              class="primary white--text px-6 py-2 uppercase font-medium"
+              class="primary white--text px-5 py-2 uppercase font-semibold"
             >
               Home
             </NuxtLink>
@@ -83,7 +83,7 @@
             <NuxtLink
               nuxt
               to="/add-report"
-              class="primary white--text px-6 py-2 uppercase font-medium"
+              class="primary white--text px-5 py-2 uppercase font-semibold"
             >
               Vangst toevoegen
             </NuxtLink>
@@ -91,7 +91,7 @@
           <v-list-item class="py-2">
             <button
               @click="logout"
-              class="primary white--text px-6 py-2 uppercase font-medium"
+              class="primary white--text px-5 py-2 uppercase font-semibold"
             >
               Log uit
             </button>

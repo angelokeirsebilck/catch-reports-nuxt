@@ -15,7 +15,7 @@
   </v-app> -->
   <v-app class="text-base">
     <LayoutTheHeader />
-    <Nuxt />
+    <Nuxt keep-alive />
   </v-app>
 </template>
 

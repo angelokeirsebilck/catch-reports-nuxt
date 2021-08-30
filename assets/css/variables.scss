@@ -1,13 +1,27 @@
+// Gobal
+
+$body-font-family: 'Montserrat', sans-serif;
+
 $text-field-border-radius: 0;
 
 // App Bar
 
 $app-bar-elevation: 0;
+$app-bar-border-radius: 30px;
 
 // List
 
 $list-item-min-height: 0;
+$list-item-title-font-size: 1.6rem;
 
 // Toolbar
 
 $toolbar-content-padding-x: 20px;
+
+// Cards
+
+$card-title-font-size: 3rem;
+
+// Input
+
+$input-max-height: 100%;

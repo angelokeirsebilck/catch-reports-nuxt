@@ -57,6 +57,7 @@ export default {
       },
     ],
     '@nuxtjs/tailwindcss',
+    '@nuxtjs/google-fonts',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -101,5 +102,11 @@ export default {
   vuetify: {
     customVariables: ['~/assets/css/variables.scss'],
     treeShake: true,
+  },
+  googleFonts: {
+    families: {
+      Montserrat: [100, 300, 400, 500, 600, 700, 800, 900],
+    },
+    preload: true,
   },
 }
