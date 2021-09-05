@@ -52,7 +52,7 @@ export default {
           },
         },
         breakpoint: {
-          mobileBreakpoint: 'xl', // This is equivalent to a value of 960
+          mobileBreakpoint: 'xl',
         },
       },
     ],

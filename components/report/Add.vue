@@ -42,6 +42,19 @@
             </v-date-picker>
           </v-menu>
         </ValidationProvider>
+        <ValidationProvider v-slot="{ errors }" mode="eager">
+          <v-file-input
+            v-model.trim="report.general.media"
+            label="Media"
+            accept="image/*,video/*"
+            :error-messages="errors"
+            append-icon="mdi-camera"
+            prepend-icon=""
+            chips
+            multiple
+            outlined
+          ></v-file-input>
+        </ValidationProvider>
         <div class="text-md font-medium mb-4">Weer Informatie</div>
         <div class="">
           <ValidationProvider v-slot="{ errors }" mode="eager">
@@ -148,7 +161,7 @@ export default {
         general: {
           date: null,
           datePicker: false,
-          textDate: null,
+          media: null,
         },
         weatherInformation: {
           description: '',

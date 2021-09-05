@@ -59,7 +59,7 @@
 
     <div class="mt-3">
       <p>
-        Nog niet registreerd?
+        Nog niet geregistreerd?
         <v-hover v-slot="{ hover }">
           <NuxtLink
             class="text-green-600 duration-300"
