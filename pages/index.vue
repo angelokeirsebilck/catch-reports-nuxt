@@ -47,9 +47,24 @@ export default {
           console.log(error)
         })
     },
+    async getAllBaitFromCurentUser() {
+      let baitArray = []
+      await this.$fire.firestore
+        .collection('bait')
+        .doc(this.$fire.auth.currentUser.uid)
+        .collection('userBaits')
+        .get()
+        .then((snapshot) => {
+          snapshot.docs.map((doc) => {
+            baitArray.push(doc.data())
+          })
+        })
+      this.$store.dispatch('bait/setUserBait', baitArray)
+    },
   },
-  // created() {
-  //   this.$store.dispatch('setAppLoaded', true)
-  // },
+  mounted() {
+    this.getAllBaitFromCurentUser()
+    // this.$store.dispatch('bait/getAllBaitFromCurentUser')
+  },
 }
 </script>

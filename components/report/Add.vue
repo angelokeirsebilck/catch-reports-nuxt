@@ -44,9 +44,9 @@
         </ValidationProvider>
         <ValidationProvider v-slot="{ errors }" mode="eager">
           <v-file-input
-            v-model.trim="report.general.media"
+            v-model.trim="media"
             label="Media"
-            accept="image/*,video/*"
+            accept="image/*"
             :error-messages="errors"
             append-icon="mdi-camera"
             prepend-icon=""
@@ -54,6 +54,15 @@
             multiple
             outlined
           ></v-file-input>
+        </ValidationProvider>
+        <ValidationProvider v-slot="{ errors }" mode="eager">
+          <v-combobox
+            v-model.trim="report.general.bait"
+            label="Aas"
+            :items="userBaitList"
+            :error-messages="errors"
+            outlined
+          ></v-combobox>
         </ValidationProvider>
         <div class="text-md font-medium mb-4">Weer Informatie</div>
         <div class="">
@@ -157,11 +166,15 @@ export default {
   data() {
     return {
       windDirectionItems: ['Noord', 'Noord-Oost', 'Oost'],
+      userBaitList: [],
+      media: null,
+      uploadCount: 0,
       report: {
         general: {
           date: null,
           datePicker: false,
-          media: null,
+          media: [],
+          bait: null,
         },
         weatherInformation: {
           description: '',
@@ -176,9 +189,95 @@ export default {
     }
   },
   methods: {
-    submitForm() {
-      this.$store.dispatch('report/addReport', this.report)
+    async submitForm() {
+      this.uploadImage(this.media)
     },
+    async uploadImage(media) {
+      Promise.all(
+        // Array of "Promises"
+        media.map((image) => this.putStorageItem(image))
+      )
+        .then((url) => {
+          console.log(`All success`)
+        })
+        .catch((error) => {
+          console.log(`Some failed: `, error.message)
+        })
+    },
+    putStorageItem(item) {
+      const childPath = `report/${
+        this.$fire.auth.currentUser.uid
+      }/${Math.random().toString(36)}`
+
+      // the return value will be a Promise
+      return this.$fire.storage
+        .ref()
+        .child(childPath)
+        .put(item)
+        .then((snapshot) => {
+          snapshot.ref.getDownloadURL().then((url) => {
+            this.report.general.media.push(url)
+            this.uploadCount += 1
+          })
+          console.log('One success:')
+        })
+        .catch((error) => {
+          console.log('One failed:', item, error.message)
+        })
+    },
+    insertNewUserBait(bait) {
+      const baitObject = {
+        name: bait,
+      }
+      this.$fire.firestore
+        .collection('bait')
+        .doc(this.$fire.auth.currentUser.uid)
+        .collection('userBaits')
+        .doc()
+        .set(baitObject)
+        .then(() => {
+          console.log('User bait added.')
+        })
+        .catch((error) => {
+          console.error('Error writing document: ', error)
+        })
+    },
+  },
+  watch: {
+    uploadCount() {
+      if (this.media.length == this.uploadCount) {
+        console.log('all uploaded')
+
+        if (!this.userBaitList.includes(this.report.general.bait)) {
+          this.insertNewUserBait(this.report.general.bait)
+        }
+
+        this.$store.dispatch('report/addReport', this.report)
+        this.$store.dispatch('bait/getAllBaitFromCurentUser', [])
+        this.report = {
+          general: {
+            date: null,
+            datePicker: false,
+            media: [],
+            bait: null,
+          },
+          weatherInformation: {
+            description: '',
+            temp: '',
+            feelsLike: '',
+            pressure: '',
+            humidity: '',
+            windSpeed: '',
+            windDirection: '',
+          },
+        }
+        this.uploadCount = 0
+      }
+    },
+  },
+  created() {
+    const userBaitList = this.$store.getters['bait/userBait']
+    this.userBaitList = userBaitList
   },
 }
 </script>

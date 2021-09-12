@@ -17,7 +17,6 @@ export default function ({ $fire, store, redirect }) {
   //     return redirect('/login')
   //   }
   // }
-  console.log(store.getters['auth/isAuthenticated'])
   if (!store.getters['auth/isAuthenticated']) {
     return redirect('/login')
   }
