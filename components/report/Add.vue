@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-xll">
-    <ValidationObserver v-slot="{ handleSubmit }">
-      <v-form @submit.prevent="handleSubmit(submitForm)">
+    <ValidationObserver v-slot="{ handleSubmit, reset }" ref="observer">
+      <v-form @submit.prevent="handleSubmit(submitForm)" @reset.prevent="reset">
         <div class="text-md font-medium mb-4">Algemeen</div>
         <ValidationProvider
           name="date"
@@ -44,7 +44,7 @@
         </ValidationProvider>
         <ValidationProvider v-slot="{ errors }" mode="eager">
           <v-file-input
-            v-model.trim="media"
+            v-model="media"
             label="Media"
             accept="image/*"
             :error-messages="errors"
@@ -166,8 +166,8 @@ export default {
   data() {
     return {
       windDirectionItems: ['Noord', 'Noord-Oost', 'Oost'],
-      userBaitList: [],
-      media: null,
+      // userBaitList: [],
+      media: [],
       uploadCount: 0,
       report: {
         general: {
@@ -187,6 +187,14 @@ export default {
         },
       },
     }
+  },
+  computed: {
+    userBaitList: {
+      get() {
+        return this.$store.getters['bait/userBait']
+      },
+      set() {},
+    },
   },
   methods: {
     async submitForm() {
@@ -229,7 +237,7 @@ export default {
       const baitObject = {
         name: bait,
       }
-      this.$fire.firestore
+      return this.$fire.firestore
         .collection('bait')
         .doc(this.$fire.auth.currentUser.uid)
         .collection('userBaits')
@@ -244,16 +252,17 @@ export default {
     },
   },
   watch: {
-    uploadCount() {
+    async uploadCount() {
       if (this.media.length == this.uploadCount) {
         console.log('all uploaded')
 
         if (!this.userBaitList.includes(this.report.general.bait)) {
-          this.insertNewUserBait(this.report.general.bait)
+          await this.insertNewUserBait(this.report.general.bait)
         }
 
         this.$store.dispatch('report/addReport', this.report)
-        this.$store.dispatch('bait/getAllBaitFromCurentUser', [])
+        this.$store.dispatch('bait/getAllBaitFromCurentUser')
+        this.media = []
         this.report = {
           general: {
             date: null,
@@ -272,10 +281,11 @@ export default {
           },
         }
         this.uploadCount = 0
+        this.$refs.observer.reset()
       }
     },
   },
-  created() {
+  mounted() {
     const userBaitList = this.$store.getters['bait/userBait']
     this.userBaitList = userBaitList
   },

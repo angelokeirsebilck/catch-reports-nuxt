@@ -4,23 +4,24 @@ export const state = () => ({
 
 export const mutations = {
   setUserBait(state, payload) {
-    state.bait = payload
+    state.bait = payload.slice()
   },
 }
 
 export const actions = {
-  getAllBaitFromCurentUser(context, payload) {
-    this.$fire.firestore
+  async getAllBaitFromCurentUser(context, payload) {
+    let baitArray = []
+    await this.$fire.firestore
       .collection('bait')
       .doc(this.$fire.auth.currentUser.uid)
       .collection('userBaits')
       .get()
       .then((snapshot) => {
         snapshot.docs.map((doc) => {
-          payload.push(doc.data())
+          baitArray.push(doc.data())
         })
       })
-    context.commit('setUserBait', payload)
+    context.dispatch('setUserBait', baitArray)
   },
   setUserBait(context, payload) {
     context.commit('setUserBait', payload)
