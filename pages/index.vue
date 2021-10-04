@@ -47,24 +47,26 @@ export default {
           console.log(error)
         })
     },
-    async getAllBaitFromCurentUser() {
-      let baitArray = []
-      await this.$fire.firestore
-        .collection('bait')
-        .doc(this.$fire.auth.currentUser.uid)
-        .collection('userBaits')
-        .get()
-        .then((snapshot) => {
-          snapshot.docs.map((doc) => {
-            baitArray.push(doc.data())
-          })
-        })
-      this.$store.dispatch('bait/setUserBait', baitArray)
-    },
+    // async getAllBaitFromCurentUser() {
+    //   let baitArray = []
+    //   await this.$fire.firestore
+    //     .collection('bait')
+    //     .doc(this.$fire.auth.currentUser.uid)
+    //     .collection('userBaits')
+    //     .get()
+    //     .then((snapshot) => {
+    //       snapshot.docs.map((doc) => {
+    //         baitArray.push(doc.data())
+    //       })
+    //     })
+    //   this.$store.dispatch('bait/setUserBait', baitArray)
+    // },
   },
   mounted() {
-    this.getAllBaitFromCurentUser()
-    // this.$store.dispatch('bait/getAllBaitFromCurentUser')
+    // this.getAllBaitFromCurentUser()
+    this.$store.dispatch('bait/getAllBaitFromCurentUser')
+    this.$store.dispatch('technique/getAllTechniqueFromCurentUser')
+    this.$store.dispatch('location/getAllLocationFromCurentUser')
   },
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-xll">
-    <ValidationObserver v-slot="{ handleSubmit, reset }" ref="observer">
-      <v-form @submit.prevent="handleSubmit(submitForm)" @reset.prevent="reset">
+    <ValidationObserver v-slot="{ reset }" ref="observer">
+      <v-form @submit.prevent="submitForm" @reset.prevent="reset">
         <div class="text-md font-medium mb-4">Algemeen</div>
         <ValidationProvider
           name="date"
@@ -60,6 +60,44 @@
             v-model.trim="report.general.bait"
             label="Aas"
             :items="userBaitList"
+            :error-messages="errors"
+            outlined
+          ></v-combobox>
+        </ValidationProvider>
+        <ValidationProvider v-slot="{ errors }" mode="eager">
+          <v-combobox
+            v-model.trim="report.general.technique"
+            label="Techniek"
+            :items="userTechniqueList"
+            :error-messages="errors"
+            outlined
+          ></v-combobox>
+        </ValidationProvider>
+        <ValidationProvider v-slot="{ errors }" mode="eager">
+          <v-text-field
+            v-model.trim="report.general.weight"
+            label="Gewicht"
+            type="number"
+            :error-messages="errors"
+            suffix="Kg"
+            outlined
+          ></v-text-field>
+        </ValidationProvider>
+        <div class="text-md font-medium mb-4">Locatie</div>
+        <ValidationProvider v-slot="{ errors }" mode="eager">
+          <v-combobox
+            v-model.trim="report.location.place"
+            label="Plaats"
+            :items="userLocationList"
+            :error-messages="errors"
+            outlined
+          ></v-combobox>
+        </ValidationProvider>
+        <ValidationProvider v-slot="{ errors }" mode="eager">
+          <v-combobox
+            v-model.trim="report.location.spot"
+            label="Stek"
+            :items="userLocationList"
             :error-messages="errors"
             outlined
           ></v-combobox>
@@ -166,7 +204,6 @@ export default {
   data() {
     return {
       windDirectionItems: ['Noord', 'Noord-Oost', 'Oost'],
-      // userBaitList: [],
       media: [],
       uploadCount: 0,
       report: {
@@ -175,6 +212,12 @@ export default {
           datePicker: false,
           media: [],
           bait: null,
+          technique: '',
+          weight: '',
+        },
+        location: {
+          place: '',
+          spot: '',
         },
         weatherInformation: {
           description: '',
@@ -195,9 +238,35 @@ export default {
       },
       set() {},
     },
+    userTechniqueList: {
+      get() {
+        return this.$store.getters['technique/userTechnique']
+      },
+      set() {},
+    },
+    userLocationList: {
+      get() {
+        return this.$store.getters['location/userLocation']
+      },
+      set() {},
+    },
   },
   methods: {
     async submitForm() {
+      const observer = this.$refs.observer
+      const success = await observer.validate()
+
+      if (!success) {
+        for (const key of Object.keys(observer.fields).sort()) {
+          if (observer.fields[key].invalid) {
+            observer.refs[key].$el.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center',
+            })
+            return
+          }
+        }
+      }
       this.uploadImage(this.media)
     },
     async uploadImage(media) {
@@ -250,19 +319,60 @@ export default {
           console.error('Error writing document: ', error)
         })
     },
+    insertNewUserTechnique(technique) {
+      const techniqueObject = {
+        name: technique,
+      }
+      return this.$fire.firestore
+        .collection('technique')
+        .doc(this.$fire.auth.currentUser.uid)
+        .collection('userTechniques')
+        .doc()
+        .set(techniqueObject)
+        .then(() => {
+          console.log('User technique added.')
+        })
+        .catch((error) => {
+          console.error('Error writing document: ', error)
+        })
+    },
+    insertNewUserLocation(loc) {
+      const locObject = {
+        name: loc,
+      }
+      return this.$fire.firestore
+        .collection('location')
+        .doc(this.$fire.auth.currentUser.uid)
+        .collection('userLocations')
+        .doc()
+        .set(locObject)
+        .then(() => {
+          console.log('Loc technique added.')
+        })
+        .catch((error) => {
+          console.error('Error writing document: ', error)
+        })
+    },
   },
   watch: {
     async uploadCount() {
-      if (this.media.length == this.uploadCount) {
+      if (this.media.length == this.uploadCount && this.uploadCount !== 0) {
         console.log('all uploaded')
 
         if (!this.userBaitList.includes(this.report.general.bait)) {
           await this.insertNewUserBait(this.report.general.bait)
         }
+        if (!this.userTechniqueList.includes(this.report.general.technique)) {
+          await this.insertNewUserTechnique(this.report.general.technique)
+        }
+        if (!this.userLocationList.includes(this.report.location.place)) {
+          await this.insertNewUserLocation(this.report.location.place)
+        }
 
         this.$store.dispatch('report/addReport', this.report)
         this.$store.dispatch('bait/getAllBaitFromCurentUser')
-        this.media = []
+        this.$store.dispatch('technique/getAllTechniqueFromCurentUser')
+        this.$store.dispatch('location/getAllLocationFromCurentUser')
 
         this.report = {
           general: {
@@ -270,6 +380,11 @@ export default {
             datePicker: false,
             media: [],
             bait: null,
+            weight: '',
+          },
+          location: {
+            place: '',
+            spot: '',
           },
           weatherInformation: {
             description: '',
@@ -282,13 +397,18 @@ export default {
           },
         }
         this.uploadCount = 0
+        this.media = []
         this.$refs.observer.reset()
       }
     },
   },
-  mounted() {
+  async mounted() {
     const userBaitList = this.$store.getters['bait/userBait']
     this.userBaitList = userBaitList
+    const userTechniqueList = this.$store.getters['technique/userTechnique']
+    this.userTechniqueList = userTechniqueList
+    const userLocationList = this.$store.getters['location/userLocation']
+    this.userLocationList = userLocationList
   },
 }
 </script>

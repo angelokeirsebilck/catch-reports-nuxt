@@ -31,9 +31,12 @@ export const actions = {
 export const getters = {
   userBait(state) {
     let baitArray = []
-    state.bait.forEach((bait) => {
-      baitArray.push(bait.name)
-    })
+    if (state.bait !== null) {
+      state.bait.forEach((bait) => {
+        baitArray.push(bait.name)
+      })
+    }
+
     return baitArray
   },
 }
