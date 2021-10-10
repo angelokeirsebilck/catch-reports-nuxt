@@ -90,6 +90,7 @@
             label="Plaats"
             :items="userLocationList"
             :error-messages="errors"
+            @change="placeChanged"
             outlined
           ></v-combobox>
         </ValidationProvider>
@@ -97,7 +98,7 @@
           <v-combobox
             v-model.trim="report.location.spot"
             label="Stek"
-            :items="userLocationList"
+            :items="userSpotsForSelectedLocation"
             :error-messages="errors"
             outlined
           ></v-combobox>
@@ -244,6 +245,12 @@ export default {
       },
       set() {},
     },
+    userSpotsForSelectedLocation: {
+      get() {
+        return this.$store.getters['location/userSpotsForSelectedLocation']
+      },
+      set() {},
+    },
     userLocationList: {
       get() {
         return this.$store.getters['location/userLocation']
@@ -252,6 +259,12 @@ export default {
     },
   },
   methods: {
+    placeChanged() {
+      this.$store.dispatch(
+        'location/setCurrentLocationSpots',
+        this.report.location.place
+      )
+    },
     async submitForm() {
       const observer = this.$refs.observer
       const success = await observer.validate()
@@ -347,7 +360,26 @@ export default {
         .doc()
         .set(locObject)
         .then(() => {
-          console.log('Loc technique added.')
+          console.log('Loc place added.')
+        })
+        .catch((error) => {
+          console.error('Error writing document: ', error)
+        })
+    },
+    insertNewUserLocationSpot(spot) {
+      const locObject = {
+        name: spot,
+      }
+      return this.$fire.firestore
+        .collection('location')
+        .doc(this.$fire.auth.currentUser.uid)
+        .collection('userLocations')
+        .doc(this.$store.state.location.locationId)
+        .collection('locationSpots')
+        .doc()
+        .set(locObject)
+        .then(() => {
+          console.log('Spot added for place')
         })
         .catch((error) => {
           console.error('Error writing document: ', error)
@@ -367,6 +399,15 @@ export default {
         }
         if (!this.userLocationList.includes(this.report.location.place)) {
           await this.insertNewUserLocation(this.report.location.place)
+        }
+        if (
+          !this.userSpotsForSelectedLocation.includes(this.report.location.spot)
+        ) {
+          console.log('ja?')
+          console.log(this.$store.state.location.locationId)
+          if (this.$store.state.location.locationId != null) {
+            await this.insertNewUserLocationSpot(this.report.location.spot)
+          }
         }
 
         this.$store.dispatch('report/addReport', this.report)
@@ -403,12 +444,12 @@ export default {
     },
   },
   async mounted() {
-    const userBaitList = this.$store.getters['bait/userBait']
-    this.userBaitList = userBaitList
-    const userTechniqueList = this.$store.getters['technique/userTechnique']
-    this.userTechniqueList = userTechniqueList
-    const userLocationList = this.$store.getters['location/userLocation']
-    this.userLocationList = userLocationList
+    // const userBaitList = this.$store.getters['bait/userBait']
+    // this.userBaitList = userBaitList
+    // const userTechniqueList = this.$store.getters['technique/userTechnique']
+    // this.userTechniqueList = userTechniqueList
+    // const userLocationList = this.$store.getters['location/userLocation']
+    // this.userLocationList = userLocationList
   },
 }
 </script>

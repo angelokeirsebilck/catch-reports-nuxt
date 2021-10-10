@@ -18,6 +18,8 @@ export default function ({ $fire, store, redirect }) {
   //   }
   // }
   if (!store.getters['auth/isAuthenticated']) {
-    return redirect('/login')
+    try {
+      return redirect('/login')
+    } catch {}
   }
 }
