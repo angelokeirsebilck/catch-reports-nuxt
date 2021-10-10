@@ -29,6 +29,7 @@ export const actions = {
       })
       if (!isChanged) {
         context.commit('setCurrentLocationSpots', [])
+        context.commit('setLocationIds', null)
       }
     }
   },

@@ -204,30 +204,36 @@ export default {
   },
   data() {
     return {
+      newAddedItemsIdList: {
+        bait: null,
+        technique: null,
+        place: null,
+        spot: null,
+      },
       windDirectionItems: ['Noord', 'Noord-Oost', 'Oost'],
       media: [],
       uploadCount: 0,
+      noImagesSelected: false,
       report: {
         general: {
           date: null,
-          datePicker: false,
           media: [],
           bait: null,
-          technique: '',
-          weight: '',
+          technique: null,
+          weight: null,
         },
         location: {
-          place: '',
-          spot: '',
+          place: null,
+          spot: null,
         },
         weatherInformation: {
-          description: '',
-          temp: '',
-          feelsLike: '',
-          pressure: '',
-          humidity: '',
-          windSpeed: '',
-          windDirection: '',
+          description: null,
+          temp: null,
+          feelsLike: null,
+          pressure: null,
+          humidity: null,
+          windSpeed: null,
+          windDirection: null,
         },
       },
     }
@@ -288,10 +294,15 @@ export default {
         media.map((image) => this.putStorageItem(image))
       )
         .then((url) => {
-          console.log(`All success`)
+          // Trigger uploadCount when no images are selected to start adding the report
+          if (this.uploadCount == 0) {
+            this.uploadCount += 1
+            this.noImagesSelected = true
+          }
+          console.log(`All images uploaded success`)
         })
         .catch((error) => {
-          console.log(`Some failed: `, error.message)
+          console.log(`Some images uploading failed: `, error.message)
         })
     },
     putStorageItem(item) {
@@ -309,10 +320,10 @@ export default {
             this.report.general.media.push(url)
             this.uploadCount += 1
           })
-          console.log('One success:')
+          console.log('One img uploaded.')
         })
         .catch((error) => {
-          console.log('One failed:', item, error.message)
+          console.log('One img failed uploading:', item, error.message)
         })
     },
     insertNewUserBait(bait) {
@@ -323,9 +334,9 @@ export default {
         .collection('bait')
         .doc(this.$fire.auth.currentUser.uid)
         .collection('userBaits')
-        .doc()
-        .set(baitObject)
-        .then(() => {
+        .add(baitObject)
+        .then((doc) => {
+          this.newAddedItemsIdList.bait = doc.id
           console.log('User bait added.')
         })
         .catch((error) => {
@@ -340,9 +351,9 @@ export default {
         .collection('technique')
         .doc(this.$fire.auth.currentUser.uid)
         .collection('userTechniques')
-        .doc()
-        .set(techniqueObject)
-        .then(() => {
+        .add(techniqueObject)
+        .then((doc) => {
+          this.newAddedItemsIdList.technique = doc.id
           console.log('User technique added.')
         })
         .catch((error) => {
@@ -357,28 +368,40 @@ export default {
         .collection('location')
         .doc(this.$fire.auth.currentUser.uid)
         .collection('userLocations')
-        .doc()
-        .set(locObject)
-        .then(() => {
+        .add(locObject)
+        .then((doc) => {
+          this.newAddedItemsIdList.place = doc.id
           console.log('Loc place added.')
+
+          if (
+            !this.userSpotsForSelectedLocation.includes(
+              this.report.location.spot
+            ) &&
+            this.report.general.spot !== null
+          ) {
+            this.insertNewUserLocationSpot(this.report.location.spot, doc.id)
+          }
         })
         .catch((error) => {
           console.error('Error writing document: ', error)
         })
     },
-    insertNewUserLocationSpot(spot) {
+    insertNewUserLocationSpot(spot, locId = null) {
       const locObject = {
         name: spot,
       }
+
+      const locationDocIc =
+        locId == null ? this.$store.state.location.locationI : locId
       return this.$fire.firestore
         .collection('location')
         .doc(this.$fire.auth.currentUser.uid)
         .collection('userLocations')
-        .doc(this.$store.state.location.locationId)
+        .doc(locationDocIc)
         .collection('locationSpots')
-        .doc()
-        .set(locObject)
-        .then(() => {
+        .add(locObject)
+        .then((doc) => {
+          this.newAddedItemsIdList.spot = doc.id
           console.log('Spot added for place')
         })
         .catch((error) => {
@@ -388,25 +411,40 @@ export default {
   },
   watch: {
     async uploadCount() {
-      if (this.media.length == this.uploadCount && this.uploadCount !== 0) {
-        console.log('all uploaded')
-
-        if (!this.userBaitList.includes(this.report.general.bait)) {
+      if (
+        (this.media.length == this.uploadCount && this.uploadCount !== 0) ||
+        this.noImagesSelected
+      ) {
+        if (
+          !this.userBaitList.includes(this.report.general.bait) &&
+          this.report.general.bait !== null
+        ) {
           await this.insertNewUserBait(this.report.general.bait)
-        }
-        if (!this.userTechniqueList.includes(this.report.general.technique)) {
-          await this.insertNewUserTechnique(this.report.general.technique)
-        }
-        if (!this.userLocationList.includes(this.report.location.place)) {
-          await this.insertNewUserLocation(this.report.location.place)
+          this.report.general.bait = this.newAddedItemsIdList.bait
         }
         if (
-          !this.userSpotsForSelectedLocation.includes(this.report.location.spot)
+          !this.userTechniqueList.includes(this.report.general.technique) &&
+          this.report.general.technique !== null
         ) {
-          console.log('ja?')
-          console.log(this.$store.state.location.locationId)
+          await this.insertNewUserTechnique(this.report.general.technique)
+          this.report.general.technique = this.newAddedItemsIdList.technique
+        }
+        if (
+          !this.userLocationList.includes(this.report.location.place) &&
+          this.report.location.place !== null
+        ) {
+          await this.insertNewUserLocation(this.report.location.place)
+          this.report.location.place = this.newAddedItemsIdList.place
+        }
+        if (
+          !this.userSpotsForSelectedLocation.includes(
+            this.report.location.spot
+          ) &&
+          this.report.general.spot !== null
+        ) {
           if (this.$store.state.location.locationId != null) {
             await this.insertNewUserLocationSpot(this.report.location.spot)
+            this.report.location.spot = this.newAddedItemsIdList.spot
           }
         }
 
@@ -415,30 +453,39 @@ export default {
         this.$store.dispatch('technique/getAllTechniqueFromCurentUser')
         this.$store.dispatch('location/getAllLocationFromCurentUser')
 
+        this.newAddedItemsIdList = {
+          bait: null,
+          technique: null,
+          place: null,
+          spot: null,
+        }
+
         this.report = {
           general: {
             date: null,
             datePicker: false,
             media: [],
             bait: null,
-            weight: '',
+            weight: null,
+            technique: null,
           },
           location: {
-            place: '',
-            spot: '',
+            place: null,
+            spot: null,
           },
           weatherInformation: {
-            description: '',
-            temp: '',
-            feelsLike: '',
-            pressure: '',
-            humidity: '',
-            windSpeed: '',
-            windDirection: '',
+            description: null,
+            temp: null,
+            feelsLike: null,
+            pressure: null,
+            humidity: null,
+            windSpeed: null,
+            windDirection: null,
           },
         }
         this.uploadCount = 0
         this.media = []
+        this.noImagesSelected = false
         this.$refs.observer.reset()
       }
     },
