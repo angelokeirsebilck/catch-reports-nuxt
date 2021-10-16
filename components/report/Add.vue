@@ -392,7 +392,8 @@ export default {
       }
 
       const locationDocIc =
-        locId == null ? this.$store.state.location.locationI : locId
+        locId == null ? this.$store.state.location.locationId : locId
+
       return this.$fire.firestore
         .collection('location')
         .doc(this.$fire.auth.currentUser.uid)
@@ -402,6 +403,7 @@ export default {
         .add(locObject)
         .then((doc) => {
           this.newAddedItemsIdList.spot = doc.id
+          // this.report.location.spot = this.newAddedItemsIdList.spot
           console.log('Spot added for place')
         })
         .catch((error) => {
@@ -444,6 +446,7 @@ export default {
         ) {
           if (this.$store.state.location.locationId != null) {
             await this.insertNewUserLocationSpot(this.report.location.spot)
+            console.log('test')
             this.report.location.spot = this.newAddedItemsIdList.spot
           }
         }
