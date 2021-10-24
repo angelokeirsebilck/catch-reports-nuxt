@@ -23,8 +23,8 @@ module.exports = {
       sm: '.875rem',
       tiny: '.875rem',
       base: '1.6rem',
-      md: '3rem',
-      lg: '1.125rem',
+      md: '2.4rem',
+      lg: '3rem',
       xl: '1.25rem',
       '2xl': '1.5rem',
       '3xl': '1.875rem',
@@ -67,12 +67,15 @@ module.exports = {
       32: '32rem',
       36: '36rem',
       40: '40rem',
-      44: '11rem',
+      44: '44rem',
       48: '48rem',
     },
   },
   variants: {
-    extend: {},
+    extend: {
+      opacity: ['group-hover'],
+      scale: ['group-hover'],
+    },
   },
   // plugins: [require('@tailwindcss/forms')],
 }

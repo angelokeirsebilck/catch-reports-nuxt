@@ -25,9 +25,9 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    { src: '~plugins/vuelidate.js' },
-    { src: '~/plugins/vee-validate.js' },
-    // { src: '~/plugins/vue-loading-overlay.js' },
+    { src: '~plugins/vee-validate.js' },
+    { src: '~plugins/fancybox-ui.js' },
+    { src: '~plugins/awesome-swiper.js' },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -58,6 +58,7 @@ export default {
     ],
     '@nuxtjs/tailwindcss',
     '@nuxtjs/google-fonts',
+    '@nuxt/image',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -108,5 +109,9 @@ export default {
       Montserrat: [100, 300, 400, 500, 600, 700, 800, 900],
     },
     preload: true,
+  },
+  image: {
+    domains: ['https://firebasestorage.googleapis.com'],
+    provider: 'static',
   },
 }
