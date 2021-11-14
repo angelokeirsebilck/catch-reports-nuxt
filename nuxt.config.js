@@ -21,6 +21,10 @@ export default {
   css: [
     // SCSS file in the project
     '@/assets/css/main',
+    {
+      src: '@fancyapps/ui/dist/fancybox.css',
+      land: 'css',
+    },
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins

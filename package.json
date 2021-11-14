@@ -20,7 +20,7 @@
     "nuxt": "^2.15.7",
     "sass": "^1.35.2",
     "sass-loader": "10",
-    "swiper": "5.4.5",
+    "swiper": "6.8.4",
     "vee-validate": "^3.4.10",
     "vue-awesome-swiper": "^4.1.1",
     "vue-loading-overlay": "^4.0.3",

@@ -1,6 +1,23 @@
 <template>
   <div :class="[noImageClass, 'overflow-hidden']">
-    <img
+    <nuxt-img
+      v-if="report.general.media.length > 0"
+      :src="report.general.media[0]"
+      format="webp"
+      sizes="sm:100vw md:100vw lg:33vw"
+      fit="fill"
+      class="
+        md:group-hover:scale-105
+        transform
+        transition-all
+        z-0
+        block
+        h-32
+        object-cover
+        w-full
+      "
+    />
+    <!-- <img
       class="
         object-cover
         md:group-hover:scale-105
@@ -14,17 +31,14 @@
       v-if="report.general.media.length > 0"
       e
       :src="report.general.media[0]"
-    />
+    /> -->
     <img
       v-else
       class="h-full"
       src="/catch-reports-logo.svg"
       alt="Catch Reports Logo"
     />
-    <!-- <nuxt-picture
-          v-if="report.report.general.media.length > 0"
-          :src="report.report.general.media[0]"
-        /> -->
+
     <!-- <div class="" v-if="report.general.media.length > 0">test</div>
          -->
     <div

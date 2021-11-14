@@ -209,6 +209,8 @@
 <script>
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 
+let timer
+
 export default {
   components: {
     ValidationProvider,
@@ -394,38 +396,39 @@ export default {
         // Array of "Promises"
         media.map((image) => this.putStorageItem(image))
       )
-        .then((url) => {
-          console.log(`All images uploaded success`)
-          this.addReport()
+        .then(() => {
+          timer = setInterval(this.checkUploadCount, 500)
         })
         .catch((error) => {
           console.log(`Some images uploading failed: `, error.message)
         })
     },
+    checkUploadCount() {
+      if (this.uploadCount == this.media.length) {
+        this.addReport()
+        this.uploadCount = 0
+        clearInterval(timer)
+        console.log(`All images uploaded success`)
+      }
+    },
     putStorageItem(item) {
-      const childPath = `report/${
-        this.$fire.auth.currentUser.uid
-      }/${Math.random().toString(36)}`
-
       // the return value will be a Promise
       return this.$fire.storage
         .ref()
-        .child(childPath)
+        .child(Math.random().toString(36))
         .put(item)
         .then((snapshot) => {
           snapshot.ref.getDownloadURL().then((url) => {
             this.report.general.media.push(url)
+            this.uploadCount += 1
+            console.log('Img added')
           })
-          console.log('One img uploaded.')
         })
         .catch((error) => {
           console.log('One img failed uploading:', item, error.message)
         })
     },
     insertNewUserBait(bait) {
-      const baitObject = {
-        name: bait,
-      }
       return this.$fire.firestore
         .collection('users')
         .doc(this.$fire.auth.currentUser.uid)
@@ -433,7 +436,7 @@ export default {
         .doc()
         .set({
           createdAt: this.$fireModule.firestore.Timestamp.now(),
-          baitObject,
+          name: bait,
         })
         .then((doc) => {
           console.log('User bait added.')
@@ -443,9 +446,6 @@ export default {
         })
     },
     insertNewUserTechnique(technique) {
-      const techniqueObject = {
-        name: technique,
-      }
       return this.$fire.firestore
         .collection('users')
         .doc(this.$fire.auth.currentUser.uid)
@@ -453,7 +453,7 @@ export default {
         .doc()
         .set({
           createdAt: this.$fireModule.firestore.Timestamp.now(),
-          techniqueObject,
+          name: technique,
         })
         .then(() => {
           console.log('User technique added.')
@@ -463,16 +463,13 @@ export default {
         })
     },
     insertNewUserLocation(loc) {
-      const locObject = {
-        name: loc,
-      }
       return this.$fire.firestore
         .collection('users')
         .doc(this.$fire.auth.currentUser.uid)
         .collection('userLocations')
         .add({
           createdAt: this.$fireModule.firestore.Timestamp.now(),
-          locObject,
+          name: loc,
         })
         .then((doc) => {
           console.log('Loc place added.')
@@ -490,10 +487,6 @@ export default {
         })
     },
     insertNewUserLocationSpot(spot, locId = null) {
-      const locObject = {
-        name: spot,
-      }
-
       const locationDocIc =
         locId == null ? this.$store.state.location.locationId : locId
       return this.$fire.firestore
@@ -504,7 +497,7 @@ export default {
         .collection('userLocationSpots')
         .add({
           createdAt: this.$fireModule.firestore.Timestamp.now(),
-          locObject,
+          name: spot,
         })
         .then(() => {
           console.log('Spot added for place')

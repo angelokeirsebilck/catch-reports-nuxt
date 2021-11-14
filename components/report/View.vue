@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-7xl mx-auto">
-    <swiper
+    <!-- <swiper
       v-if="report.report.report.general.media.length > 0"
       ref="mySwiper"
       :options="swiperOptions"
@@ -9,18 +9,45 @@
       <swiper-slide
         v-for="(img, index) in report.report.report.general.media"
         :key="index"
-      >
-        <v-img :lazy-src="img" :src="img" class="max-h-48"></v-img>
-      </swiper-slide>
+        class="cursor-pointer"
+      > -->
+    <nuxt-img
+      :src="report.report.report.general.media[0]"
+      sizes="sm:100vw md:100vw lg:100vw"
+      format="webp"
+      class="
+        md:group-hover:scale-105
+        transform
+        transition-all
+        z-0
+        block
+        cursor-pointer
+      "
+      data-fancybox="gallery"
+    />
+    <nuxt-img
+      v-for="(img, index) in hiddenFancyBoxImages"
+      :key="index"
+      :src="img"
+      sizes="sm:100vw md:100vw lg:100vw"
+      format="webp"
+      class="
+        md:group-hover:scale-105
+        transform
+        transition-all
+        z-0
+        block
+        invisible
+        hidden
+      "
+      data-fancybox="gallery"
+    />
+    <!-- </swiper-slide>
       <div class="swiper-pagination" slot="pagination"></div>
-    </swiper>
+    </swiper> -->
   </div>
 </template>
 
-<style scoped>
-.swiper-pagination-bullet {
-}
-</style>
 <script>
 export default {
   props: {
@@ -38,7 +65,12 @@ export default {
       },
     }
   },
-  computed: {},
+  computed: {
+    hiddenFancyBoxImages() {
+      const reports = [...this.report.report.report.general.media]
+      return reports.slice(1)
+    },
+  },
   mounted() {},
 }
 </script>
