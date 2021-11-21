@@ -2,7 +2,7 @@
   <div :class="[noImageClass, 'overflow-hidden']">
     <nuxt-img
       v-if="report.general.media.length > 0"
-      :src="report.general.media[0]"
+      :src="report.general.media[0].url"
       format="webp"
       sizes="sm:100vw md:100vw lg:33vw"
       fit="fill"

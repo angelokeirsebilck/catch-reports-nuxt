@@ -1,5 +1,6 @@
 <template>
   <div class="max-w-screen-xl mx-auto justify-start align-middle w-full pa-5">
+    <ReportFilter />
     <div
       class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 auto-rows-max"
     >
@@ -19,8 +20,11 @@
 export default {
   middleware: 'auth',
   computed: {
+    // reports() {
+    //   return this.$store.state.report.reports
+    // },
     reports() {
-      return this.$store.state.report.reports
+      return this.$store.getters['report/allReports']
     },
   },
   methods: {

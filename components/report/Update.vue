@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-xll">
+  <div class="">
     <ValidationObserver v-slot="{ reset }" ref="observer">
       <v-form @submit.prevent="submitForm" @reset.prevent="reset">
         <div class="text-md font-medium mb-4">Algemeen</div>
@@ -46,7 +46,7 @@
             </v-date-picker>
           </v-menu>
         </ValidationProvider>
-        <ValidationProvider v-slot="{ errors }" mode="eager">
+        <ValidationProvider name="media" v-slot="{ errors }" mode="eager">
           <v-file-input
             v-model="media"
             label="Media"
@@ -59,7 +59,7 @@
             outlined
           ></v-file-input>
         </ValidationProvider>
-        <ValidationProvider v-slot="{ errors }" mode="eager">
+        <ValidationProvider name="bait" v-slot="{ errors }" mode="eager">
           <v-combobox
             v-model.trim="report.general.bait"
             label="Aas"
@@ -68,7 +68,7 @@
             outlined
           ></v-combobox>
         </ValidationProvider>
-        <ValidationProvider v-slot="{ errors }" mode="eager">
+        <ValidationProvider name="technique" v-slot="{ errors }" mode="eager">
           <v-combobox
             v-model.trim="report.general.technique"
             label="Techniek"
@@ -77,7 +77,7 @@
             outlined
           ></v-combobox>
         </ValidationProvider>
-        <ValidationProvider v-slot="{ errors }" mode="eager">
+        <ValidationProvider name="weight" v-slot="{ errors }" mode="eager">
           <v-text-field
             v-model.trim="report.general.weight"
             label="Gewicht"
@@ -87,7 +87,7 @@
             outlined
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider v-slot="{ errors }" mode="eager">
+        <ValidationProvider name="extraInf" v-slot="{ errors }" mode="eager">
           <v-textarea
             v-model.trim="report.general.extraInf"
             label="Extra Informatie"
@@ -96,7 +96,7 @@
           ></v-textarea>
         </ValidationProvider>
         <div class="text-md font-medium mb-4">Locatie</div>
-        <ValidationProvider v-slot="{ errors }" mode="eager">
+        <ValidationProvider name="place" v-slot="{ errors }" mode="eager">
           <v-combobox
             v-model.trim="report.location.place"
             label="Plaats"
@@ -106,7 +106,7 @@
             outlined
           ></v-combobox>
         </ValidationProvider>
-        <ValidationProvider v-slot="{ errors }" mode="eager">
+        <ValidationProvider name="spot" v-slot="{ errors }" mode="eager">
           <v-combobox
             v-model.trim="report.location.spot"
             label="Stek"
@@ -117,7 +117,7 @@
         </ValidationProvider>
         <div class="text-md font-medium mb-4">Weer Informatie</div>
         <div class="">
-          <ValidationProvider v-slot="{ errors }" mode="eager">
+          <ValidationProvider name="descr" v-slot="{ errors }" mode="eager">
             <v-text-field
               v-model.trim="report.weatherInformation.description"
               label="Beschrijving"
@@ -127,7 +127,7 @@
           </ValidationProvider>
         </div>
         <div class="">
-          <ValidationProvider v-slot="{ errors }" mode="eager">
+          <ValidationProvider name="temp" v-slot="{ errors }" mode="eager">
             <v-text-field
               v-model.trim="report.weatherInformation.temp"
               label="Temperatuur"
@@ -139,7 +139,7 @@
           </ValidationProvider>
         </div>
         <div class="">
-          <ValidationProvider v-slot="{ errors }" mode="eager">
+          <ValidationProvider name="feelslike" v-slot="{ errors }" mode="eager">
             <v-text-field
               v-model.trim="report.weatherInformation.feelsLike"
               label="Gevoelstemperatuur"
@@ -151,7 +151,7 @@
           </ValidationProvider>
         </div>
         <div class="">
-          <ValidationProvider v-slot="{ errors }" mode="eager">
+          <ValidationProvider name="pressure" v-slot="{ errors }" mode="eager">
             <v-text-field
               v-model.trim="report.weatherInformation.pressure"
               label="Druk"
@@ -163,7 +163,7 @@
           </ValidationProvider>
         </div>
         <div class="">
-          <ValidationProvider v-slot="{ errors }" mode="eager">
+          <ValidationProvider name="humidity" v-slot="{ errors }" mode="eager">
             <v-text-field
               v-model.trim="report.weatherInformation.humidity"
               label="Vochtigheid"
@@ -173,7 +173,7 @@
           </ValidationProvider>
         </div>
         <div class="">
-          <ValidationProvider v-slot="{ errors }" mode="eager">
+          <ValidationProvider name="windspeed" v-slot="{ errors }" mode="eager">
             <v-text-field
               v-model.trim="report.weatherInformation.windSpeed"
               label="Windsnelheid"
@@ -184,7 +184,11 @@
           </ValidationProvider>
         </div>
         <div class="">
-          <ValidationProvider v-slot="{ errors }" mode="eager">
+          <ValidationProvider
+            name="winddirection"
+            v-slot="{ errors }"
+            mode="eager"
+          >
             <v-select
               v-model.trim="report.weatherInformation.windDirection"
               :items="windDirectionItems"
@@ -209,7 +213,15 @@
 <script>
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 
+let timer
+
 export default {
+  props: {
+    oldReport: {
+      type: Object,
+      required: true,
+    },
+  },
   components: {
     ValidationProvider,
     ValidationObserver,
@@ -303,6 +315,7 @@ export default {
 
       if (!success) {
         for (const key of Object.keys(observer.fields).sort()) {
+          console.log(observer.refs[key])
           if (observer.fields[key].invalid) {
             observer.refs[key].$el.scrollIntoView({
               behavior: 'smooth',
@@ -312,8 +325,9 @@ export default {
           }
         }
       }
-      if (this.media.length > 0) {
-        this.uploadImages(this.media)
+
+      if (this.media.length > 0 && this.$refs.observer.fields.media.dirty) {
+        this.deleteImages(this.report.general.media)
       } else {
         this.addReport()
       }
@@ -348,7 +362,11 @@ export default {
         }
       }
 
-      this.$store.dispatch('report/addReport', this.report)
+      const payload = {
+        report: this.report,
+        id: this.oldReport.id,
+      }
+      this.$store.dispatch('report/updateReport', payload)
       this.$store.dispatch('bait/getAllBaitFromCurentUser')
       this.$store.dispatch('technique/getAllTechniqueFromCurentUser')
       this.$store.dispatch('location/getAllLocationFromCurentUser')
@@ -387,45 +405,102 @@ export default {
       this.uploadCount = 0
       this.media = []
       this.noImagesSelected = false
-      this.$refs.observer.reset()
+
+      this.$nextTick(() => {
+        this.$refs.observer.reset()
+        this.$store.dispatch('report/getAllReports')
+        this.$router.push({
+          path: `/`,
+        })
+      })
     },
-    async uploadImages(media) {
+    deleteImages(media) {
       Promise.all(
         // Array of "Promises"
-        media.map((image) => this.putStorageItem(image))
+        media.map((image) => this.deleteStorageItem(image))
       )
         .then((url) => {
-          console.log(`All images uploaded success`)
-          this.addReport()
+          // timer = setInterval(this.checkUploadCount, 500)
+          console.log('All images deleted')
+          this.uploadImages(this.media)
         })
         .catch((error) => {
           console.log(`Some images uploading failed: `, error.message)
         })
     },
-    putStorageItem(item) {
-      const childPath = `report/${
-        this.$fire.auth.currentUser.uid
-      }/${Math.random().toString(36)}`
-
+    async uploadImages(media) {
+      this.report.general.media = []
+      Promise.all(
+        // Array of "Promises"
+        media.map((image) => this.putStorageItem(image))
+      )
+        .then((url) => {
+          timer = setInterval(this.checkUploadCount, 500)
+        })
+        .catch((error) => {
+          console.log(`Some images uploading failed: `, error.message)
+        })
+    },
+    checkUploadCount() {
+      if (this.uploadCount == this.media.length) {
+        this.addReport()
+        this.uploadCount = 0
+        clearInterval(timer)
+        console.log(`All images uploaded success`)
+      }
+    },
+    async deleteStorageItem(image) {
       // the return value will be a Promise
-      return this.$fire.storage
-        .ref()
-        .child(childPath)
-        .put(item)
-        .then((snapshot) => {
-          snapshot.ref.getDownloadURL().then((url) => {
-            this.report.general.media.push(url)
-          })
-          console.log('One img uploaded.')
+      const ref = this.$fire.storage.ref(image.ref)
+      return ref
+        .delete()
+        .then(() => {
+          console.log('Image deleted')
         })
         .catch((error) => {
           console.log('One img failed uploading:', item, error.message)
         })
     },
-    insertNewUserBait(bait) {
-      const baitObject = {
-        name: bait,
+    putStorageItem(item) {
+      // the return value will be a Promise
+      const ref = this.$fire.storage.ref().child(Math.random().toString(36))
+
+      ref
+        .put(item)
+        .then((snapshot) => {
+          snapshot.ref.getDownloadURL().then((url) => {
+            const mediaObject = {
+              url,
+              ref: ref.name,
+            }
+            this.report.general.media.push(mediaObject)
+            this.uploadCount += 1
+            console.log('Img added')
+            this.updateMetaData(ref, item.name)
+          })
+        })
+        .catch((error) => {
+          console.log('One img failed uploading:', item, error.message)
+        })
+
+      return ref
+    },
+    updateMetaData(ref, name) {
+      var customMetaData = {
+        customMetadata: {
+          name: name,
+        },
       }
+      ref
+        .updateMetadata(customMetaData)
+        .then((metadata) => {
+          console.log('Metadata updated.')
+        })
+        .catch((error) => {
+          console.log('Updating metadata failed: ', error.message)
+        })
+    },
+    insertNewUserBait(bait) {
       return this.$fire.firestore
         .collection('users')
         .doc(this.$fire.auth.currentUser.uid)
@@ -433,7 +508,7 @@ export default {
         .doc()
         .set({
           createdAt: this.$fireModule.firestore.Timestamp.now(),
-          baitObject,
+          name: bait,
         })
         .then((doc) => {
           console.log('User bait added.')
@@ -443,9 +518,6 @@ export default {
         })
     },
     insertNewUserTechnique(technique) {
-      const techniqueObject = {
-        name: technique,
-      }
       return this.$fire.firestore
         .collection('users')
         .doc(this.$fire.auth.currentUser.uid)
@@ -453,7 +525,7 @@ export default {
         .doc()
         .set({
           createdAt: this.$fireModule.firestore.Timestamp.now(),
-          techniqueObject,
+          name: technique,
         })
         .then(() => {
           console.log('User technique added.')
@@ -463,16 +535,13 @@ export default {
         })
     },
     insertNewUserLocation(loc) {
-      const locObject = {
-        name: loc,
-      }
       return this.$fire.firestore
         .collection('users')
         .doc(this.$fire.auth.currentUser.uid)
         .collection('userLocations')
         .add({
           createdAt: this.$fireModule.firestore.Timestamp.now(),
-          locObject,
+          name: loc,
         })
         .then((doc) => {
           console.log('Loc place added.')
@@ -490,10 +559,6 @@ export default {
         })
     },
     insertNewUserLocationSpot(spot, locId = null) {
-      const locObject = {
-        name: spot,
-      }
-
       const locationDocIc =
         locId == null ? this.$store.state.location.locationId : locId
       return this.$fire.firestore
@@ -504,7 +569,7 @@ export default {
         .collection('userLocationSpots')
         .add({
           createdAt: this.$fireModule.firestore.Timestamp.now(),
-          locObject,
+          name: spot,
         })
         .then(() => {
           console.log('Spot added for place')
@@ -513,6 +578,60 @@ export default {
           console.error('Error writing document: ', error)
         })
     },
+    blobToFile(theBlob, fileName) {
+      var file = new File([theBlob], fileName, { lastModified: new Date() })
+      return file
+    },
+  },
+  async mounted() {
+    const oldReport = this.oldReport.report.report
+    // this.media = oldReport.general.media
+
+    // Array of "Promises"
+    oldReport.general.media.forEach((img) => {
+      const ref = this.$fire.storage.ref(img.ref)
+
+      ref
+        .getMetadata()
+        .then((metadata) => {
+          var xhr = new XMLHttpRequest()
+          xhr.responseType = 'blob'
+          xhr.onload = (event) => {
+            var blob = xhr.response
+            var file = this.blobToFile(blob, metadata.customMetadata.name)
+            this.media.push(file)
+          }
+          xhr.open('GET', img.url, true)
+          xhr.send()
+        })
+        .catch((error) => {
+          // Uh-oh, an error occurred!
+        })
+    })
+
+    this.report = {
+      general: {
+        date: oldReport.general.date,
+        media: oldReport.general.media,
+        bait: oldReport.general.bait,
+        weight: oldReport.general.weight,
+        technique: oldReport.general.technique,
+        extraInf: oldReport.general.extraInf,
+      },
+      location: {
+        place: oldReport.location.place,
+        spot: oldReport.location.spot,
+      },
+      weatherInformation: {
+        description: oldReport.weatherInformation.description,
+        temp: oldReport.weatherInformation.temp,
+        feelsLike: oldReport.weatherInformation.feelsLike,
+        pressure: oldReport.weatherInformation.pressure,
+        humidity: oldReport.weatherInformation.humidity,
+        windSpeed: oldReport.weatherInformation.windSpeed,
+        windDirection: oldReport.weatherInformation.windDirection,
+      },
+    }
   },
 }
 </script>

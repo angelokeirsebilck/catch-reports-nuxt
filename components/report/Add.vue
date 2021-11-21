@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-xll">
+  <div class="max-w-7xl mx-auto">
     <ValidationObserver v-slot="{ reset }" ref="observer">
       <v-form @submit.prevent="submitForm" @reset.prevent="reset">
         <div class="text-md font-medium mb-4">Algemeen</div>
@@ -349,7 +349,6 @@ export default {
           await this.insertNewUserLocationSpot(this.report.location.spot)
         }
       }
-
       this.$store.dispatch('report/addReport', this.report)
       this.$store.dispatch('bait/getAllBaitFromCurentUser')
       this.$store.dispatch('technique/getAllTechniqueFromCurentUser')
@@ -389,7 +388,13 @@ export default {
       this.uploadCount = 0
       this.media = []
       this.noImagesSelected = false
-      this.$refs.observer.reset()
+      this.$nextTick(() => {
+        this.$refs.observer.reset()
+        this.$store.dispatch('report/getAllReports')
+        this.$router.push({
+          path: `/`,
+        })
+      })
     },
     async uploadImages(media) {
       Promise.all(
@@ -413,19 +418,41 @@ export default {
     },
     putStorageItem(item) {
       // the return value will be a Promise
-      return this.$fire.storage
-        .ref()
-        .child(Math.random().toString(36))
+      const ref = this.$fire.storage.ref().child(Math.random().toString(36))
+
+      ref
         .put(item)
         .then((snapshot) => {
           snapshot.ref.getDownloadURL().then((url) => {
-            this.report.general.media.push(url)
+            const mediaObject = {
+              url,
+              ref: ref.name,
+            }
+            this.report.general.media.push(mediaObject)
             this.uploadCount += 1
             console.log('Img added')
+            this.updateMetaData(ref, item.name)
           })
         })
         .catch((error) => {
           console.log('One img failed uploading:', item, error.message)
+        })
+
+      return ref
+    },
+    updateMetaData(ref, name) {
+      var customMetaData = {
+        customMetadata: {
+          name: name,
+        },
+      }
+      ref
+        .updateMetadata(customMetaData)
+        .then((metadata) => {
+          console.log('Metadata updated.')
+        })
+        .catch((error) => {
+          console.log('Updating metadata failed: ', error.message)
         })
     },
     insertNewUserBait(bait) {

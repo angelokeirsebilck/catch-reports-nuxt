@@ -18,6 +18,15 @@ module.exports = {
       },
       white: '#FFF',
     },
+    borderWidth: {
+      DEFAULT: '1px',
+      0: '0',
+      2: '2px',
+      3: '3px',
+      4: '4px',
+      6: '6px',
+      8: '8px',
+    },
     fontSize: {
       xs: '.75rem',
       sm: '.875rem',

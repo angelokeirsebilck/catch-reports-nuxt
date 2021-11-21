@@ -52,7 +52,11 @@ export default {
               },
               error: '#b71c1c',
               test: '#3B82F6',
+              gray: '#9CA3AF',
             },
+          },
+          options: {
+            customProperties: true,
           },
         },
         breakpoint: {
@@ -117,5 +121,10 @@ export default {
   image: {
     domains: ['https://firebasestorage.googleapis.com'],
     provider: 'static',
+  },
+  axios: {
+    proxyHeaders: false,
+    credentials: false,
+    https: true,
   },
 }
