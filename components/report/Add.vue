@@ -349,6 +349,7 @@ export default {
           await this.insertNewUserLocationSpot(this.report.location.spot)
         }
       }
+
       this.$store.dispatch('report/addReport', this.report)
       this.$store.dispatch('bait/getAllBaitFromCurentUser')
       this.$store.dispatch('technique/getAllTechniqueFromCurentUser')

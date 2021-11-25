@@ -1,39 +1,45 @@
 <template>
-  <div>
+  <div class="mb-4">
+    <div class="text-base opacity-60">{{ label }}</div>
     <v-range-slider
       v-model="range"
       :max="max"
       :min="min"
       hide-details
       track-color="gray"
+      thumb-label
       class="align-center"
       @change="setParentValues"
     >
       <template v-slot:prepend>
-        <v-text-field
-          :value="range[0]"
-          hide-details
-          single-line
-          outlined
-          :suffix="suffix"
-          :min="min"
-          :max="max"
-          type="number"
-          @change="(value) => setMinValue(value)"
-        ></v-text-field>
+        <div class="hidden md:block">
+          <v-text-field
+            :value="range[0]"
+            hide-details
+            single-line
+            outlined
+            :suffix="suffix"
+            :min="min"
+            :max="max"
+            type="number"
+            @change="(value) => setMinValue(value)"
+          ></v-text-field>
+        </div>
       </template>
       <template v-slot:append>
-        <v-text-field
-          :value="range[1]"
-          hide-details
-          single-line
-          outlined
-          :min="min"
-          :suffix="suffix"
-          type="number"
-          :max="max"
-          @change="(value) => setMaxValue(value)"
-        ></v-text-field>
+        <div class="hidden md:block">
+          <v-text-field
+            :value="range[1]"
+            hide-details
+            single-line
+            outlined
+            :min="min"
+            :suffix="suffix"
+            type="number"
+            :max="max"
+            @change="(value) => setMaxValue(value)"
+          ></v-text-field>
+        </div>
       </template>
     </v-range-slider>
   </div>
@@ -43,6 +49,10 @@
 export default {
   emits: ['change-values'],
   props: {
+    label: {
+      type: String,
+      required: true,
+    },
     min: {
       type: Number,
       required: true,

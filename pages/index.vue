@@ -3,6 +3,7 @@
     <ReportFilter />
     <div
       class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 auto-rows-max"
+      v-if="reports && reports.length > 0"
     >
       <div
         @click="reportClickHandler(report.id)"
@@ -12,6 +13,9 @@
       >
         <ReportCard :report="report.report.report" />
       </div>
+    </div>
+    <div class="text-5xl text-primary-default" v-else>
+      Helaas geen reports gevonden met deze gegevens.
     </div>
   </div>
 </template>

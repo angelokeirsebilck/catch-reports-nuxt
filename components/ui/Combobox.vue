@@ -1,11 +1,12 @@
 <template>
-  <div>
+  <div class="mb-4">
     <v-select
       class="mySelect"
       v-model.trim="value"
-      label="Plaats"
+      :label="label"
       :items="list"
       outlined
+      hide-details=""
       multiple
       chips
       deletable-chips
@@ -48,6 +49,10 @@ export default {
   props: {
     list: {
       type: Array,
+      required: true,
+    },
+    label: {
+      type: String,
       required: true,
     },
   },

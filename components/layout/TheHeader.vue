@@ -74,7 +74,15 @@
             <NuxtLink
               nuxt
               to="/"
-              class="primary white--text px-5 py-2 uppercase font-semibold"
+              class="
+                primary
+                white--text
+                px-5
+                py-2
+                uppercase
+                font-semibold
+                hover:text-primary-lighter1
+              "
             >
               Home
             </NuxtLink>

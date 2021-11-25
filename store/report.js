@@ -5,7 +5,7 @@ export const state = () => ({
   reportLoading: false,
   weightRange: {
     min: 1,
-    max: 40,
+    max: 1,
   },
   filters: {
     weight: {
@@ -13,6 +13,9 @@ export const state = () => ({
       max: 30,
     },
     locations: [],
+    baits: [],
+    techniques: [],
+    years: [],
   },
 })
 
@@ -36,6 +39,15 @@ export const mutations = {
   setWeightRange(state, payload) {
     state.weightRange.min = payload.min
     state.weightRange.max = payload.max
+  },
+  setBaitsFilter(state, payload) {
+    state.filters.baits = payload
+  },
+  setTechniquesFilter(state, payload) {
+    state.filters.techniques = payload
+  },
+  setYearsFilter(state, payload) {
+    state.filters.years = payload
   },
 }
 
@@ -107,10 +119,14 @@ export const actions = {
     let weightRangeMin = context.state.weightRange.min
     let weightRangeMax = context.state.weightRange.max
 
-    if (reports.length > 0) {
+    if (
+      reports.length > 0 &&
+      reports[0].report.report.general.weight !== null
+    ) {
       weightRangeMin = reports[0].report.report.general.weight
-      weightRangeMax = reports[1].report.report.general.weight
+      weightRangeMax = reports[0].report.report.general.weight
     }
+
     reports.forEach((report) => {
       if (report.report.report.general.weight !== null) {
         if (report.report.report.general.weight < weightRangeMin) {
@@ -127,7 +143,6 @@ export const actions = {
       min: parseInt(weightRangeMin),
       max: parseInt(weightRangeMax),
     }
-
     context.commit('setWeightRange', weightRange)
   },
   async getReport(context, payload) {
@@ -166,31 +181,73 @@ export const getters = {
   allReports(state) {
     let reports = state.reports
     if (reports !== null) {
-      const reportsWeightFiltered = reports.filter((report) =>
-        isBetween(
+      const reportsWeightFiltered = reports.filter((report) => {
+        if (report.report.report.general.weight == null) return true
+        return isBetween(
           state.filters.weight.min,
           state.filters.weight.max,
           report.report.report.general.weight
         )
-      )
+      })
       reports = reportsWeightFiltered
 
       if (state.filters.locations.length > 0) {
         const reportsLocationsFiltered = reports.filter((report) =>
-          isLocationIncluded(
+          isIncluded(
             state.filters.locations,
             report.report.report.location.place
           )
         )
         reports = reportsLocationsFiltered
       }
+
+      if (state.filters.baits.length > 0) {
+        const reportsBaitssFiltered = reports.filter((report) =>
+          isIncluded(state.filters.baits, report.report.report.general.bait)
+        )
+        reports = reportsBaitssFiltered
+      }
+
+      if (state.filters.techniques.length > 0) {
+        const reportsTechniquesFiltered = reports.filter((report) =>
+          isIncluded(
+            state.filters.techniques,
+            report.report.report.general.technique
+          )
+        )
+        reports = reportsTechniquesFiltered
+      }
+
+      if (state.filters.years.length > 0) {
+        const reportsYearsFiltered = reports.filter((report) => {
+          const year = new Date(report.report.report.general.date).getFullYear()
+          return isIncluded(state.filters.years, year)
+        })
+        reports = reportsYearsFiltered
+      }
     }
 
     return reports
   },
+  allYears(state) {
+    let reports = state.reports
+    let years = []
+
+    if (reports && reports.length > 0) {
+      reports.forEach((report) => {
+        const date = new Date(report.report.report.general.date)
+        const year = date.getFullYear()
+        if (!years.includes(year)) {
+          years.push(year)
+        }
+      })
+    }
+
+    return years
+  },
 }
 
 const isBetween = (min, max, value) => value >= min && value <= max
-const isLocationIncluded = (locations, reportLocation) => {
-  return locations.includes(reportLocation)
+const isIncluded = (array, value) => {
+  return array.includes(value)
 }

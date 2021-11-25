@@ -17,6 +17,7 @@ module.exports = {
         default: '#10B981',
       },
       white: '#FFF',
+      black: '#1F2937',
     },
     borderWidth: {
       DEFAULT: '1px',
@@ -75,6 +76,7 @@ module.exports = {
       28: '28rem',
       32: '32rem',
       36: '36rem',
+      37: '37rem',
       40: '40rem',
       44: '44rem',
       48: '48rem',

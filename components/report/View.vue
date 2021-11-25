@@ -65,7 +65,7 @@
     <div class="text-md font-medium mb-2 mt-3">Algemeen</div>
     <ReportValue
       name="Datum"
-      :value="reportComputed.general.date"
+      :value="formatDate"
       v-if="reportComputed.general.date"
     />
     <ReportValue
@@ -178,6 +178,12 @@ export default {
     },
   },
   computed: {
+    formatDate() {
+      const newDate = new Date(this.report.report.report.general.date)
+      return `${newDate.getDate()}-${
+        newDate.getMonth() + 1
+      }-${newDate.getFullYear()}`
+    },
     hiddenFancyBoxImages() {
       const reports = [...this.report.report.report.general.media]
       return reports.slice(1)
