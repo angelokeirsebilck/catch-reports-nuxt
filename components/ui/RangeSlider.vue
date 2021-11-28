@@ -2,7 +2,7 @@
   <div class="mb-4">
     <div class="text-base opacity-60">{{ label }}</div>
     <v-range-slider
-      v-model="range"
+      v-model="rangeComputed"
       :max="max"
       :min="min"
       hide-details
@@ -14,7 +14,7 @@
       <template v-slot:prepend>
         <div class="hidden md:block">
           <v-text-field
-            :value="range[0]"
+            :value="rangeComputed[0]"
             hide-details
             single-line
             outlined
@@ -29,7 +29,7 @@
       <template v-slot:append>
         <div class="hidden md:block">
           <v-text-field
-            :value="range[1]"
+            :value="rangeComputed[1]"
             hide-details
             single-line
             outlined
@@ -64,22 +64,19 @@ export default {
     suffix: {
       type: String,
     },
-    // range: {
-    //   type: Array,
-    //   required: true,
-    // },
+    range: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
-      minComponent: this.min,
-      maxComponent: this.max,
+      minComponent: this.range[0],
+      maxComponent: this.range[1],
     }
   },
   computed: {
-    // range() {
-    //   return [this.minComponent, this.maxComponent]
-    // },
-    range: {
+    rangeComputed: {
       get() {
         return [this.minComponent, this.maxComponent]
       },
@@ -96,22 +93,24 @@ export default {
     max() {
       this.maxComponent = this.max
     },
+    range() {
+      this.minComponent = this.range[0]
+      this.maxComponent = this.range[1]
+    },
   },
   methods: {
     setMaxValue(event) {
       this.$set(this.range, 1, event)
-      // this.range[1] = parseInt(event)
-      this.range = [this.minComponent, parseInt(event)]
+      this.rangeComputed = [this.minComponent, parseInt(event)]
       this.setParentValues()
     },
     setMinValue(event) {
       this.$set(this.range, 0, event)
-      // this.range[0] = parseInt(event)
-      this.range = [parseInt(event), this.maxComponent]
+      this.rangeComputed = [parseInt(event), this.maxComponent]
       this.setParentValues()
     },
     setParentValues() {
-      this.$emit('change-values', this.range[0], this.range[1])
+      this.$emit('change-values', this.rangeComputed[0], this.rangeComputed[1])
     },
   },
 }

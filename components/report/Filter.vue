@@ -7,7 +7,7 @@
       icon="mdi-filter"
       btnStyle="primary-outline"
     />
-    <v-navigation-drawer absolute v-model="drawer" :width="filterWidth">
+    <v-navigation-drawer fixed v-model="drawer" :width="filterWidth">
       <v-list class="px-5 pt-8">
         <UiRangeSlider
           @change-values="setWeight"
@@ -41,7 +41,7 @@
           :value="techniquesFilter"
         />
       </v-list>
-      <v-list class="px-5 pt-8">
+      <v-list class="px-5 pt-4" v-if="showClearFilterButton">
         <UiButton
           iconPos="right"
           label="Verwijder alle filters"
@@ -110,6 +110,9 @@ export default {
     },
     weightMaxFilter() {
       return this.$store.state.report.filters.weight.max
+    },
+    showClearFilterButton() {
+      return this.$store.getters['report/showClearFilterButton']
     },
   },
   methods: {

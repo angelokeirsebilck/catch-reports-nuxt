@@ -56,8 +56,8 @@ export const mutations = {
   clearAllFilters(state, payload) {
     state.filters = {
       weight: {
-        min: 0,
-        max: 30,
+        min: state.weightRange.min,
+        max: state.weightRange.max,
       },
       locations: [],
       baits: [],
@@ -160,6 +160,7 @@ export const actions = {
       max: parseInt(weightRangeMax),
     }
     context.commit('setWeightRange', weightRange)
+    context.commit('setWeightFilter', weightRange)
   },
   async getReport(context, payload) {
     let report = {
@@ -218,6 +219,17 @@ export const getters = {
     }
 
     return years
+  },
+  showClearFilterButton(state) {
+    if (state.filters.locations.length > 0) return true
+    if (state.filters.baits.length > 0) return true
+    if (state.filters.techniques.length > 0) return true
+    if (state.filters.years.length > 0) return true
+
+    if (state.filters.weight.min !== state.weightRange.min) return true
+    if (state.filters.weight.max !== state.weightRange.max) return true
+
+    return false
   },
 }
 
