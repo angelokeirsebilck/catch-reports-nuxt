@@ -40,6 +40,7 @@ export default {
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     // https://go.nuxtjs.dev/tailwindcss
+    '@nuxtjs/tailwindcss',
     [
       '@nuxtjs/vuetify',
       {
@@ -53,6 +54,8 @@ export default {
               error: '#b71c1c',
               test: '#3B82F6',
               gray: '#9CA3AF',
+              white: '#FFF',
+              black: '#1F2937',
             },
           },
           options: {
@@ -62,9 +65,9 @@ export default {
         breakpoint: {
           mobileBreakpoint: 'xl',
         },
+        treeShake: true,
       },
     ],
-    '@nuxtjs/tailwindcss',
     '@nuxtjs/google-fonts',
     '@nuxt/image',
   ],

@@ -1,40 +1,53 @@
 <template>
-  <div class="">
-    <div
-      @click="drawer = true"
-      class="
-        cursor-pointer
-        border-2 border-primary-default
-        inline-flex
-        items-center
-        justify-center
-        px-3
-        py-1
-        mb-5
-      "
-    >
-      <v-icon large color="primary"> mdi-filter </v-icon>
-      <span class="text-black font-medium ps-2">Toon Filter</span>
-    </div>
+  <div class="mb-5">
+    <UiButton
+      label="Filter"
+      iconPos="left"
+      @click-handler="drawer = true"
+      icon="mdi-filter"
+      btnStyle="primary-outline"
+    />
     <v-navigation-drawer absolute v-model="drawer" :width="filterWidth">
-      <v-list class="min-h-screen px-5 pt-8">
+      <v-list class="px-5 pt-8">
         <UiRangeSlider
           @change-values="setWeight"
           :min="weightMin"
           :max="weightMax"
           label="Gewicht (Kg)"
+          :range="[weightMinFilter, weightMaxFilter]"
         />
-        <UiCombobox :list="yearList" @change-values="setYear" label="Jaar" />
+        <UiCombobox
+          :list="yearList"
+          @change-values="setYear"
+          label="Jaar"
+          :value="yearsFilter"
+        />
         <UiCombobox
           :list="locationList"
           @change-values="setLocation"
           label="Plaats"
+          :value="locationsFilter"
         />
-        <UiCombobox :list="baitList" @change-values="setBait" label="Aas" />
+        <UiCombobox
+          :list="baitList"
+          @change-values="setBait"
+          label="Aas"
+          :value="baitsFilter"
+        />
         <UiCombobox
           :list="techniqueList"
           @change-values="setTechnique"
           label="Techniek"
+          :value="techniquesFilter"
+        />
+      </v-list>
+      <v-list class="px-5 pt-8">
+        <UiButton
+          iconPos="right"
+          label="Verwijder alle filters"
+          icon="mdi-close-circle"
+          btnStyle="primary-outline"
+          @click-handler="clearAllFilters"
         />
       </v-list>
     </v-navigation-drawer>
@@ -80,6 +93,24 @@ export default {
     yearList() {
       return this.$store.getters['report/allYears']
     },
+    locationsFilter() {
+      return this.$store.state.report.filters.locations
+    },
+    yearsFilter() {
+      return this.$store.state.report.filters.years
+    },
+    baitsFilter() {
+      return this.$store.state.report.filters.baits
+    },
+    techniquesFilter() {
+      return this.$store.state.report.filters.techniques
+    },
+    weightMinFilter() {
+      return this.$store.state.report.filters.weight.min
+    },
+    weightMaxFilter() {
+      return this.$store.state.report.filters.weight.max
+    },
   },
   methods: {
     changeFilterState() {
@@ -102,6 +133,9 @@ export default {
     },
     setYear(years) {
       this.$store.commit('report/setYearsFilter', years)
+    },
+    clearAllFilters() {
+      this.$store.commit('report/clearAllFilters')
     },
   },
 }

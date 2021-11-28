@@ -64,6 +64,10 @@ export default {
     suffix: {
       type: String,
     },
+    // range: {
+    //   type: Array,
+    //   required: true,
+    // },
   },
   data() {
     return {

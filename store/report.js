@@ -17,6 +17,7 @@ export const state = () => ({
     techniques: [],
     years: [],
   },
+  sort: 'Gewicht hoog-laag',
 })
 
 export const mutations = {
@@ -48,6 +49,21 @@ export const mutations = {
   },
   setYearsFilter(state, payload) {
     state.filters.years = payload
+  },
+  setSortCriteria(state, payload) {
+    state.sort = payload
+  },
+  clearAllFilters(state, payload) {
+    state.filters = {
+      weight: {
+        min: 0,
+        max: 30,
+      },
+      locations: [],
+      baits: [],
+      techniques: [],
+      years: [],
+    }
   },
 }
 
@@ -181,50 +197,8 @@ export const getters = {
   allReports(state) {
     let reports = state.reports
     if (reports !== null) {
-      const reportsWeightFiltered = reports.filter((report) => {
-        if (report.report.report.general.weight == null) return true
-        return isBetween(
-          state.filters.weight.min,
-          state.filters.weight.max,
-          report.report.report.general.weight
-        )
-      })
-      reports = reportsWeightFiltered
-
-      if (state.filters.locations.length > 0) {
-        const reportsLocationsFiltered = reports.filter((report) =>
-          isIncluded(
-            state.filters.locations,
-            report.report.report.location.place
-          )
-        )
-        reports = reportsLocationsFiltered
-      }
-
-      if (state.filters.baits.length > 0) {
-        const reportsBaitssFiltered = reports.filter((report) =>
-          isIncluded(state.filters.baits, report.report.report.general.bait)
-        )
-        reports = reportsBaitssFiltered
-      }
-
-      if (state.filters.techniques.length > 0) {
-        const reportsTechniquesFiltered = reports.filter((report) =>
-          isIncluded(
-            state.filters.techniques,
-            report.report.report.general.technique
-          )
-        )
-        reports = reportsTechniquesFiltered
-      }
-
-      if (state.filters.years.length > 0) {
-        const reportsYearsFiltered = reports.filter((report) => {
-          const year = new Date(report.report.report.general.date).getFullYear()
-          return isIncluded(state.filters.years, year)
-        })
-        reports = reportsYearsFiltered
-      }
+      reports = filterReports(state, reports)
+      reports = sortReports(state, reports)
     }
 
     return reports
@@ -250,4 +224,136 @@ export const getters = {
 const isBetween = (min, max, value) => value >= min && value <= max
 const isIncluded = (array, value) => {
   return array.includes(value)
+}
+
+const sortReports = (state, reports) => {
+  if (state.sort == 'Gewicht hoog-laag') {
+    reports.sort((a, b) => {
+      const aWeight = a.report.report.general.weight
+      const bWeight = b.report.report.general.weight
+
+      const reportA =
+        aWeight !== null ? parseFloat(a.report.report.general.weight) : aWeight
+      const reportB =
+        bWeight !== null ? parseFloat(b.report.report.general.weight) : bWeight
+
+      if (reportA === reportB) {
+        return 0
+      } else if (reportA === null) {
+        return 1
+      } else if (reportB === null) {
+        return -1
+      } else {
+        return reportA < reportB ? 1 : -1
+      }
+    })
+  } else if (state.sort == 'Gewicht laag-hoog') {
+    reports.sort((a, b) => {
+      const aWeight = a.report.report.general.weight
+      const bWeight = b.report.report.general.weight
+
+      const reportA =
+        aWeight !== null ? parseFloat(a.report.report.general.weight) : aWeight
+      const reportB =
+        bWeight !== null ? parseFloat(b.report.report.general.weight) : bWeight
+
+      if (reportA === reportB) {
+        return 0
+      } else if (reportA === null) {
+        return 1
+      } else if (reportB === null) {
+        return -1
+      } else {
+        return reportA < reportB ? -1 : 1
+      }
+    })
+  } else if (state.sort == 'Datum nieuw-oud') {
+    reports.sort((a, b) => {
+      const aDate = a.report.report.general.date
+      const bDate = b.report.report.general.date
+      console.log(aDate, bDate)
+      const reportA =
+        aDate !== null ? new Date(a.report.report.general.date) : aDate
+      const reportB =
+        bDate !== null ? new Date(b.report.report.general.date) : bDate
+
+      if (reportA === reportB) {
+        return 0
+      } else if (reportA === null) {
+        return 1
+      } else if (reportB === null) {
+        return -1
+      } else {
+        return reportA < reportB ? 1 : -1
+      }
+    })
+  } else {
+    reports.sort((a, b) => {
+      const aDate = a.report.report.general.date
+      const bDate = b.report.report.general.date
+      const reportA =
+        aDate !== null ? new Date(a.report.report.general.date) : aDate
+      const reportB =
+        bDate !== null ? new Date(b.report.report.general.date) : bDate
+
+      if (reportA === reportB) {
+        return 0
+      } else if (reportA === null) {
+        return 1
+      } else if (reportB === null) {
+        return -1
+      } else {
+        return reportA < reportB ? -1 : 1
+      }
+    })
+  }
+  return reports
+}
+
+const filterReports = (state, reports) => {
+  if (reports !== null) {
+    const reportsWeightFiltered = reports.filter((report) => {
+      if (report.report.report.general.weight == null) return true
+      return isBetween(
+        state.filters.weight.min,
+        state.filters.weight.max,
+        report.report.report.general.weight
+      )
+    })
+    reports = reportsWeightFiltered
+
+    if (state.filters.locations.length > 0) {
+      const reportsLocationsFiltered = reports.filter((report) =>
+        isIncluded(state.filters.locations, report.report.report.location.place)
+      )
+      reports = reportsLocationsFiltered
+    }
+
+    if (state.filters.baits.length > 0) {
+      const reportsBaitssFiltered = reports.filter((report) =>
+        isIncluded(state.filters.baits, report.report.report.general.bait)
+      )
+      reports = reportsBaitssFiltered
+    }
+
+    if (state.filters.techniques.length > 0) {
+      const reportsTechniquesFiltered = reports.filter((report) =>
+        isIncluded(
+          state.filters.techniques,
+          report.report.report.general.technique
+        )
+      )
+      reports = reportsTechniquesFiltered
+    }
+
+    if (state.filters.years.length > 0) {
+      const reportsYearsFiltered = reports.filter((report) => {
+        const year = new Date(report.report.report.general.date).getFullYear()
+        return isIncluded(state.filters.years, year)
+      })
+      reports = reportsYearsFiltered
+    }
+  }
+
+  return reports
 }

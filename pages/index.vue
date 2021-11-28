@@ -1,6 +1,14 @@
 <template>
-  <div class="max-w-screen-xl mx-auto justify-start align-middle w-full pa-5">
-    <ReportFilter />
+  <div
+    class="max-w-screen-xl mx-auto justify-start align-middle w-full pt-5 pa-5"
+  >
+    <div class="">
+      <ReportFilter />
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mb-5">
+        <ReportSort />
+      </div>
+    </div>
+
     <div
       class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 auto-rows-max"
       v-if="reports && reports.length > 0"
@@ -24,9 +32,6 @@
 export default {
   middleware: 'auth',
   computed: {
-    // reports() {
-    //   return this.$store.state.report.reports
-    // },
     reports() {
       return this.$store.getters['report/allReports']
     },
@@ -49,23 +54,8 @@ export default {
           console.log(error)
         })
     },
-    // async getAllBaitFromCurentUser() {
-    //   let baitArray = []
-    //   await this.$fire.firestore
-    //     .collection('bait')
-    //     .doc(this.$fire.auth.currentUser.uid)
-    //     .collection('userBaits')
-    //     .get()
-    //     .then((snapshot) => {
-    //       snapshot.docs.map((doc) => {
-    //         baitArray.push(doc.data())
-    //       })
-    //     })
-    //   this.$store.dispatch('bait/setUserBait', baitArray)
-    // },
   },
   mounted() {
-    // this.getAllBaitFromCurentUser()
     this.$store.dispatch('report/getAllReports')
     this.$store.dispatch('bait/getAllBaitFromCurentUser')
     this.$store.dispatch('technique/getAllTechniqueFromCurentUser')

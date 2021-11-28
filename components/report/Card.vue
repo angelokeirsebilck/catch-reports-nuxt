@@ -17,30 +17,12 @@
         w-full
       "
     />
-    <!-- <img
-      class="
-        object-cover
-        md:group-hover:scale-105
-        transform
-        w-full
-        h-32
-        relative
-        transition-all
-        z-0
-      "
-      v-if="report.general.media.length > 0"
-      e
-      :src="report.general.media[0]"
-    /> -->
     <img
       v-else
       class="h-full"
       src="/catch-reports-logo.svg"
       alt="Catch Reports Logo"
     />
-
-    <!-- <div class="" v-if="report.general.media.length > 0">test</div>
-         -->
     <div
       v-if="
         report.location.place || report.location.spot || report.general.weight

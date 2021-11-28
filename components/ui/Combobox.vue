@@ -2,7 +2,7 @@
   <div class="mb-4">
     <v-select
       class="mySelect"
-      v-model.trim="value"
+      v-model.trim="valueData"
       :label="label"
       :items="list"
       outlined
@@ -12,20 +12,6 @@
       deletable-chips
       @change="changeValues"
     >
-      <!-- <template v-slot:selection="{ attrs, item, parent, selected }">
-        <v-chip
-          v-bind="attrs"
-          color="primary"
-          :input-value="selected"
-          label
-          small
-        >
-          <span class="pr-2">
-            {{ item }}
-          </span>
-          <v-icon small @click="parent.selectItem(item)"> $delete </v-icon>
-        </v-chip>
-      </template> -->
     </v-select>
   </div>
 </template>
@@ -55,10 +41,14 @@ export default {
       type: String,
       required: true,
     },
+    value: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
-      value: [],
+      valueData: this.value,
     }
   },
   computed: {
@@ -67,9 +57,14 @@ export default {
       return list
     },
   },
+  watch: {
+    value() {
+      this.valueData = this.value
+    },
+  },
   methods: {
     changeValues() {
-      this.$emit('change-values', this.value)
+      this.$emit('change-values', this.valueData)
     },
   },
 }

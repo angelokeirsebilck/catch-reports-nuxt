@@ -29,6 +29,7 @@ module.exports = {
       8: '8px',
     },
     fontSize: {
+      btn: '2rem',
       xs: '.75rem',
       sm: '.875rem',
       tiny: '.875rem',
