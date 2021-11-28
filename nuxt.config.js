@@ -21,13 +21,17 @@ export default {
   css: [
     // SCSS file in the project
     '@/assets/css/main',
+    {
+      src: '@fancyapps/ui/dist/fancybox.css',
+      land: 'css',
+    },
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    { src: '~plugins/vuelidate.js' },
-    { src: '~/plugins/vee-validate.js' },
-    // { src: '~/plugins/vue-loading-overlay.js' },
+    { src: '~plugins/vee-validate.js' },
+    { src: '~plugins/fancybox-ui.js' },
+    { src: '~plugins/awesome-swiper.js' },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -36,6 +40,7 @@ export default {
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     // https://go.nuxtjs.dev/tailwindcss
+    '@nuxtjs/tailwindcss',
     [
       '@nuxtjs/vuetify',
       {
@@ -48,16 +53,23 @@ export default {
               },
               error: '#b71c1c',
               test: '#3B82F6',
+              gray: '#9CA3AF',
+              white: '#FFF',
+              black: '#1F2937',
             },
+          },
+          options: {
+            customProperties: true,
           },
         },
         breakpoint: {
           mobileBreakpoint: 'xl',
         },
+        treeShake: true,
       },
     ],
-    '@nuxtjs/tailwindcss',
     '@nuxtjs/google-fonts',
+    '@nuxt/image',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -108,5 +120,14 @@ export default {
       Montserrat: [100, 300, 400, 500, 600, 700, 800, 900],
     },
     preload: true,
+  },
+  image: {
+    domains: ['https://firebasestorage.googleapis.com'],
+    provider: 'static',
+  },
+  axios: {
+    proxyHeaders: false,
+    credentials: false,
+    https: true,
   },
 }

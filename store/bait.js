@@ -12,7 +12,7 @@ export const actions = {
   async getAllBaitFromCurentUser(context, payload) {
     let baitArray = []
     await this.$fire.firestore
-      .collection('bait')
+      .collection('users')
       .doc(this.$fire.auth.currentUser.uid)
       .collection('userBaits')
       .get()

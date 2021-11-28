@@ -34,19 +34,7 @@
           </ValidationProvider>
         </div>
         <div class="flex-col flex w-full mt-2">
-          <button
-            class="
-              bg-primary-default
-              hover:bg-primary-lighter1
-              h-5
-              text-white
-              font-medium
-              uppercase
-              transition-colors
-            "
-          >
-            Login
-          </button>
+          <UiButton label="Login" btnStyle="primary" />
         </div>
       </form>
       <p

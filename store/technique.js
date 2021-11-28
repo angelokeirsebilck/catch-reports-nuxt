@@ -12,7 +12,7 @@ export const actions = {
   async getAllTechniqueFromCurentUser(context, payload) {
     let techniqueArray = []
     await this.$fire.firestore
-      .collection('technique')
+      .collection('users')
       .doc(this.$fire.auth.currentUser.uid)
       .collection('userTechniques')
       .get()

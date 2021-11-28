@@ -1,6 +1,6 @@
 export const state = () => ({
-  location: [],
-  currentLocationSpots: [],
+  location: null,
+  currentLocationSpots: null,
   locationId: null,
 })
 
@@ -36,7 +36,7 @@ export const actions = {
   async getAllLocationFromCurentUser(context, payload) {
     let locationArray = []
     await this.$fire.firestore
-      .collection('location')
+      .collection('users')
       .doc(this.$fire.auth.currentUser.uid)
       .collection('userLocations')
       .get()
@@ -55,11 +55,11 @@ export const actions = {
       // Array of "Promises"
       locationArray.map((loc) => {
         return this.$fire.firestore
-          .collection('location')
+          .collection('users')
           .doc(this.$fire.auth.currentUser.uid)
           .collection('userLocations')
           .doc(loc.id)
-          .collection('locationSpots')
+          .collection('userLocationSpots')
           .get()
           .then((snapshot) => {
             snapshot.docs.map((doc) => {
