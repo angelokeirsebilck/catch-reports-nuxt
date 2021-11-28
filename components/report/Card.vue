@@ -35,7 +35,7 @@
         left-0
         w-full
         h-auto
-        z-20
+        z-1
         bg-primary-default
         text-white
         transition-all

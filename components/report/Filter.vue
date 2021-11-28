@@ -7,7 +7,12 @@
       icon="mdi-filter"
       btnStyle="primary-outline"
     />
-    <v-navigation-drawer fixed v-model="drawer" :width="filterWidth">
+    <v-navigation-drawer
+      class="z-50"
+      fixed
+      v-model="drawer"
+      :width="filterWidth"
+    >
       <v-list class="px-5 pt-8">
         <UiRangeSlider
           @change-values="setWeight"
