@@ -87,6 +87,7 @@ export default {
   },
   methods: {
     async submitForm() {
+      this.$store.commit('loading/setIsLoading', true)
       try {
         const createUser = await this.$fire.auth.signInWithEmailAndPassword(
           this.email,
@@ -95,6 +96,7 @@ export default {
         const user = await createUser
       } catch (error) {
         this.error = FirebaseErrors[error.code] || error.message
+        this.$store.commit('loading/setIsLoading', false)
       }
     },
   },

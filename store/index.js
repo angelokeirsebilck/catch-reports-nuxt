@@ -22,6 +22,7 @@ export const actions = {
             // console.log(this.app)
             this.app.store.dispatch('auth/setUser', snapshot.data())
             this.app.context.redirect('/')
+            context.commit('loading/setIsLoading', false)
           } else {
             console.log('Does not exist.')
           }

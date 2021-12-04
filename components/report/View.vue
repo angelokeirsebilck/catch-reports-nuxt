@@ -1,36 +1,79 @@
 <template>
   <div class="max-w-7xl mx-auto relative">
-    <div class="absolute top-2 right-2 z-10" @click="editHandler">
-      <div
-        class="
-          border-3
-          cursor-pointer
-          flex
-          items-center
-          justify-center
-          border-white
-          rounded-full
-          p-1
-        "
-      >
-        <v-icon color="white"> mdi-pencil </v-icon>
-      </div>
+    <div class="absolute top-2 right-2 z-10 flex flex-row">
+      <v-hover v-slot="{ hover }">
+        <div
+          @click="editHandler"
+          class="
+            border-3
+            cursor-pointer
+            flex
+            items-center
+            justify-center
+            border-white
+            rounded-full
+            p-1
+            hover:border-primary-default
+            transition-colors
+          "
+        >
+          <v-icon :color="hover ? 'primary' : 'white'"> mdi-pencil </v-icon>
+        </div>
+      </v-hover>
+      <v-hover v-slot="{ hover }">
+        <div
+          @click="removeHandler"
+          class="
+            border-3
+            cursor-pointer
+            flex
+            items-center
+            justify-center
+            border-white
+            rounded-full
+            p-1
+            hover:border-error
+            transition-colors
+            ml-5
+          "
+        >
+          <v-icon :color="hover ? 'error' : 'white'"> mdi-close-circle </v-icon>
+        </div>
+      </v-hover>
     </div>
-
-    <!-- <swiper
-      v-if="report.report.report.general.media.length > 0"
-      ref="mySwiper"
-      :options="swiperOptions"
-      class="h-full"
+    <UiDialog
+      :showDialog="showDialog"
+      @accept-handler="acceptHandler"
+      @decline-handler="declineHandler"
+      acceptText=""
     >
-      <swiper-slide
-        v-for="(img, index) in report.report.report.general.media"
-        :key="index"
-        class="cursor-pointer"
-      > -->
+      <template v-slot:title>
+        <div class="text-md font-medium">
+          Ben je zeker dat je dit verslag wilt verwijderen?
+        </div>
+      </template>
+      <template v-slot:decline-btn>
+        <UiButton
+          iconPos="right"
+          label="Nee"
+          icon="mdi-close-circle"
+          btnStyle="primary"
+          @click-handler="declineHandler"
+        />
+      </template>
+      <template v-slot:accept-btn>
+        <UiButton
+          iconPos="right"
+          label="Ja"
+          icon="mdi-check"
+          btnStyle="primary"
+          @click-handler="acceptHandler"
+        />
+      </template>
+    </UiDialog>
     <nuxt-img
       :src="reportComputed.general.media[0].url"
-      sizes="sm:100vw md:100vw lg:100vw"
+      sizes="sm:580px md:711px lg:800px"
       format="webp"
       class="
         md:group-hover:scale-105
@@ -58,10 +101,6 @@
       "
       data-fancybox="gallery"
     />
-    <!-- </swiper-slide>
-      <div class="swiper-pagination" slot="pagination"></div>
-    </swiper> -->
-
     <div class="text-md font-medium mb-2 mt-3">Algemeen</div>
     <ReportValue
       name="Datum"
@@ -167,14 +206,29 @@ export default {
         autoHeight: true,
         // Some Swiper option/callback...
       },
+      showDialog: false,
     }
   },
   methods: {
     editHandler() {
+      this.$store.commit('loading/setIsLoading', true)
       this.$store.dispatch('report/getReport', this.report.id)
       this.$router.push({
         path: `/update-report`,
       })
+    },
+    removeHandler() {
+      this.showDialog = !this.showDialog
+    },
+    declineHandler() {
+      this.showDialog = false
+    },
+    acceptHandler() {
+      this.$store.dispatch('report/deleteReport', {
+        id: this.report.id,
+        router: this.$router,
+      })
+      this.showDialog = false
     },
   },
   computed: {

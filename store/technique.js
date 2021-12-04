@@ -6,6 +6,9 @@ export const mutations = {
   setUserTechnique(state, payload) {
     state.technique = payload.slice()
   },
+  clearAll(state, payload) {
+    state.technique = null
+  },
 }
 
 export const actions = {

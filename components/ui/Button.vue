@@ -1,7 +1,7 @@
 <template>
   <NuxtLink v-if="nuxtLink" nuxt :to="to">
     <v-hover v-slot="{ hover }">
-      <div :class="[defaultBtnClass, btnClass]">
+      <div @click="clickHandler" :class="[defaultBtnClass, btnClass]">
         <v-icon
           v-if="icon && iconPos == 'left'"
           :size="iconSize"

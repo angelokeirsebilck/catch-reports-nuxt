@@ -10,7 +10,6 @@
       mx-auto
     "
   >
-    <!-- <p>{{ isAppLoaded }}</p> -->
     <AuthLogin2 />
   </div>
 </template>

@@ -30,7 +30,7 @@
 
 <script>
 export default {
-  middleware: 'auth',
+  middleware: ['auth', 'loadReports'],
   computed: {
     reports() {
       return this.$store.getters['report/allReports']
@@ -38,6 +38,7 @@ export default {
   },
   methods: {
     reportClickHandler(id) {
+      this.$store.commit('loading/setIsLoading', true)
       this.$store.dispatch('report/getReport', id)
       this.$router.push({
         path: `reports/${id}`,
@@ -54,12 +55,6 @@ export default {
           console.log(error)
         })
     },
-  },
-  mounted() {
-    this.$store.dispatch('report/getAllReports')
-    this.$store.dispatch('bait/getAllBaitFromCurentUser')
-    this.$store.dispatch('technique/getAllTechniqueFromCurentUser')
-    this.$store.dispatch('location/getAllLocationFromCurentUser')
   },
 }
 </script>

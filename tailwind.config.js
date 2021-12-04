@@ -32,6 +32,7 @@ module.exports = {
       },
       white: '#FFF',
       black: '#1F2937',
+      error: '#b71c1c',
     },
     borderWidth: {
       DEFAULT: '1px',

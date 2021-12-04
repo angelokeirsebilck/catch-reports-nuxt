@@ -199,7 +199,7 @@
           </ValidationProvider>
         </div>
         <button class="primary white--text px-5 py-2 uppercase font-semibold">
-          Toevoegen
+          Bewerken
         </button>
       </v-form>
     </ValidationObserver>
@@ -325,7 +325,7 @@ export default {
           }
         }
       }
-
+      this.$store.commit('loading/setIsLoading', true)
       if (this.media.length > 0 && this.$refs.observer.fields.media.dirty) {
         this.deleteImages(this.report.general.media)
       } else {
@@ -362,11 +362,12 @@ export default {
         }
       }
 
-      const payload = {
+      this.$store.dispatch('report/updateReport', {
         report: this.report,
         id: this.oldReport.id,
-      }
-      this.$store.dispatch('report/updateReport', payload)
+        router: this.$router,
+      })
+
       this.$store.dispatch('bait/getAllBaitFromCurentUser')
       this.$store.dispatch('technique/getAllTechniqueFromCurentUser')
       this.$store.dispatch('location/getAllLocationFromCurentUser')
@@ -408,10 +409,6 @@ export default {
 
       this.$nextTick(() => {
         this.$refs.observer.reset()
-        this.$store.dispatch('report/getAllReports')
-        this.$router.push({
-          path: `/`,
-        })
       })
     },
     deleteImages(media) {

@@ -21,6 +21,26 @@ export const state = () => ({
 })
 
 export const mutations = {
+  clearAll(state, payload) {
+    state.reports = null
+    state.selectedReport = null
+    state.rep = false
+    state.weightRange = {
+      min: 1,
+      max: 1,
+    }
+    state.filters = {
+      weight: {
+        min: 0,
+        max: 30,
+      },
+      locations: [],
+      baits: [],
+      techniques: [],
+      years: [],
+    }
+    state.sort = 'Gewicht hoog-laag'
+  },
   setAllReports(state, payload) {
     state.reports = payload.slice()
   },
@@ -74,9 +94,9 @@ export const actions = {
   setLocationFilter(context, payload) {
     context.commit('setLocationFilter', payload)
   },
-  setWeightRange(context, payload) {},
   async addReport(context, payload) {
-    const report = payload
+    const report = payload.report
+    const router = payload.router
     this.$fire.firestore
       .collection('report')
       .doc(this.$fire.auth.currentUser.uid)
@@ -88,6 +108,8 @@ export const actions = {
       })
       .then(() => {
         console.log('Added')
+        context.dispatch('getAllReports')
+        router.push('/')
       })
       .catch((error) => {
         console.error('Error writing document: ', error)
@@ -96,6 +118,7 @@ export const actions = {
   async updateReport(context, payload) {
     const report = payload.report
     const id = payload.id
+    const router = payload.router
     this.$fire.firestore
       .collection('report')
       .doc(this.$fire.auth.currentUser.uid)
@@ -106,12 +129,15 @@ export const actions = {
       })
       .then(() => {
         console.log('Updated')
+        context.dispatch('getAllReports')
+        router.push('/')
       })
       .catch((error) => {
         console.error('Error writing document: ', error)
       })
   },
   async getAllReports(context, payload) {
+    context.dispatch('loading/setIsLoading', true, { root: true })
     let reports = []
 
     await this.$fire.firestore
@@ -161,6 +187,7 @@ export const actions = {
     }
     context.commit('setWeightRange', weightRange)
     context.commit('setWeightFilter', weightRange)
+    context.dispatch('loading/setIsLoading', false, { root: true })
   },
   async getReport(context, payload) {
     let report = {
@@ -178,10 +205,26 @@ export const actions = {
           report.id = doc.id
           report.report = doc.data()
           context.dispatch('setSelectedReport', report)
+          context.dispatch('loading/setIsLoading', false, { root: true })
         })
     } else {
       context.dispatch('setSelectedReport', null)
     }
+  },
+  async deleteReport(context, payload) {
+    const id = payload.id
+    const router = payload.router
+
+    await this.$fire.firestore
+      .collection('report')
+      .doc(this.$fire.auth.currentUser.uid)
+      .collection('userReports')
+      .doc(id)
+      .delete()
+      .then(() => {
+        console.log('Report deleted')
+        router.push('/')
+      })
   },
   setAllReports(context, payload) {
     context.commit('setAllReports', payload)
@@ -283,7 +326,7 @@ const sortReports = (state, reports) => {
     reports.sort((a, b) => {
       const aDate = a.report.report.general.date
       const bDate = b.report.report.general.date
-      console.log(aDate, bDate)
+
       const reportA =
         aDate !== null ? new Date(a.report.report.general.date) : aDate
       const reportB =

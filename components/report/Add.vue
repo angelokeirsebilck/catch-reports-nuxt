@@ -259,13 +259,9 @@ export default {
   computed: {
     dateNow() {
       const today = new Date()
-      return (
-        today.getFullYear() +
-        '-' +
-        (today.getMonth() + 1) +
-        '-' +
-        today.getDate()
-      )
+      const month = ('0' + (today.getMonth() + 1)).slice(-2)
+      const day = ('0' + today.getDate()).slice(-2)
+      return today.getFullYear() + '-' + month + '-' + day
     },
     userBaitList: {
       get() {
@@ -314,6 +310,7 @@ export default {
           }
         }
       }
+      this.$store.commit('loading/setIsLoading', true)
       if (this.media.length > 0) {
         this.uploadImages(this.media)
       } else {
@@ -350,7 +347,10 @@ export default {
         }
       }
 
-      this.$store.dispatch('report/addReport', this.report)
+      this.$store.dispatch('report/addReport', {
+        report: this.report,
+        router: this.$router,
+      })
       this.$store.dispatch('bait/getAllBaitFromCurentUser')
       this.$store.dispatch('technique/getAllTechniqueFromCurentUser')
       this.$store.dispatch('location/getAllLocationFromCurentUser')
@@ -391,10 +391,6 @@ export default {
       this.noImagesSelected = false
       this.$nextTick(() => {
         this.$refs.observer.reset()
-        this.$store.dispatch('report/getAllReports')
-        this.$router.push({
-          path: `/`,
-        })
       })
     },
     async uploadImages(media) {

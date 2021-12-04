@@ -38,7 +38,13 @@
           </v-list-item>
           <v-divider class=""></v-divider>
           <v-list-item class="py-2 mt-2">
-            <UiButton nuxtLink label="Home" to="/" btnStyle="primary" />
+            <UiButton
+              nuxtLink
+              label="Home"
+              to="/"
+              btnStyle="primary"
+              @click-handler="closeDrawer"
+            />
           </v-list-item>
           <v-list-item class="py-2">
             <UiButton
@@ -46,6 +52,7 @@
               label="Vangst toevoegen"
               to="/add-report"
               btnStyle="primary"
+              @click-handler="closeDrawer"
             />
           </v-list-item>
           <v-list-item class="py-2">
@@ -77,11 +84,18 @@ export default {
     }
   },
   methods: {
+    closeDrawer() {
+      this.drawer = false
+    },
     logout() {
       this.$fire.auth
         .signOut()
         .then(() => {
           this.$store.dispatch('auth/setUser', null)
+          this.$store.commit('report/clearAll', null)
+          this.$store.commit('bait/clearAll', null)
+          this.$store.commit('technique/clearAll', null)
+          this.$store.commit('location/clearAll', null)
           console.log('Sign Out Succes.')
         })
         .catch((error) => {

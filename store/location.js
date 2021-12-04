@@ -14,6 +14,11 @@ export const mutations = {
   setLocationIds(state, payload) {
     state.locationId = payload
   },
+  clearAll(state, payload) {
+    state.location = null
+    state.currentLocationSpots = null
+    state.locationId = null
+  },
 }
 
 export const actions = {

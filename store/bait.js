@@ -6,6 +6,9 @@ export const mutations = {
   setUserBait(state, payload) {
     state.bait = payload.slice()
   },
+  clearAll(state, payload) {
+    state.bait = null
+  },
 }
 
 export const actions = {
