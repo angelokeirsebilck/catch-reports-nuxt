@@ -1,10 +1,29 @@
 <template>
   <div
-    class="max-w-screen-xl mx-auto justify-start align-middle w-full pt-5 pa-5"
+    class="
+      max-w-screen-xl
+      mx-auto
+      justify-start
+      align-middle
+      w-full
+      pa-5
+      pt-0
+      sticky-end
+    "
   >
-    <div class="">
-      <ReportFilter />
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mb-5">
+    <ReportFilter :isOpen="isOpen" />
+    <div class="sticky-nav z-3 pb-5 pt-5 bg-white">
+      <div class="mb-5">
+        <UiButton
+          label="Filter"
+          iconPos="left"
+          @click-handler="setIsOpen(!isOpen)"
+          icon="mdi-filter"
+          btnStyle="primary-outline"
+        />
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         <ReportSort />
       </div>
     </div>
@@ -23,17 +42,21 @@
       </div>
     </div>
     <div class="text-5xl text-primary-default" v-else>
-      Helaas geen reports gevonden met deze gegevens.
+      Helaas geen reports gevonden. Spendeer meer tijd aan het water.
     </div>
   </div>
 </template>
 
 <script>
+let st
 export default {
   middleware: ['auth', 'loadReports'],
   computed: {
     reports() {
       return this.$store.getters['report/allReports']
+    },
+    isOpen() {
+      return this.$store.state.filter.isOpen
     },
   },
   methods: {
@@ -43,6 +66,9 @@ export default {
       this.$router.push({
         path: `reports/${id}`,
       })
+    },
+    setIsOpen(value) {
+      this.$store.commit('filter/setIsOpen', value)
     },
     logout() {
       this.$fire.auth
@@ -55,6 +81,28 @@ export default {
           console.log(error)
         })
     },
+  },
+  mounted() {
+    st = this.$ScrollTrigger.create({
+      trigger: '.sticky-nav',
+      start: 'top top',
+      pin: true,
+      endTrigger: '.sticky-end',
+      end: 'bottom top',
+      scrub: true,
+      pinSpacing: false,
+    })
+
+    let tl = this.$gsap.timeline()
+    tl.scrollTrigger = st
+  },
+  updated() {
+    this.$nextTick(() => {
+      st.refresh()
+      if (window) {
+        window.dispatchEvent(new Event('resize'))
+      }
+    })
   },
 }
 </script>

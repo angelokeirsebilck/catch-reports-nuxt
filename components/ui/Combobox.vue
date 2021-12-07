@@ -67,5 +67,8 @@ export default {
       this.$emit('change-values', this.valueData)
     },
   },
+  mounted() {
+    console.log('combobox mounted')
+  },
 }
 </script>

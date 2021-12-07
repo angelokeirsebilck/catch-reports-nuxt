@@ -32,6 +32,7 @@ export default {
     { src: '~plugins/vee-validate.js' },
     { src: '~plugins/fancybox-ui.js' },
     { src: '~plugins/awesome-swiper.js' },
+    { src: '~plugins/click-outside.js' },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -70,6 +71,7 @@ export default {
     ],
     '@nuxtjs/google-fonts',
     '@nuxt/image',
+    'nuxt-gsap-module',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -129,5 +131,10 @@ export default {
     proxyHeaders: false,
     credentials: false,
     https: true,
+  },
+  gsap: {
+    extraPlugins: {
+      scrollTrigger: true,
+    },
   },
 }

@@ -78,7 +78,6 @@ export const actions = {
       })
     )
       .then(() => {
-        console.log(`All spots fetched`)
         context.dispatch('setUserLocation', locationArray)
       })
       .catch((error) => {

@@ -194,9 +194,7 @@
             ></v-select>
           </ValidationProvider>
         </div>
-        <button class="primary white--text px-5 py-2 uppercase font-semibold">
-          Toevoegen
-        </button>
+        <UiButton label="Toevoegen" btnStyle="primary" />
       </v-form>
     </ValidationObserver>
   </div>

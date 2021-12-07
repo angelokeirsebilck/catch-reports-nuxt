@@ -1,14 +1,14 @@
 <template>
-  <div class="mb-5">
-    <UiButton
+  <div class="">
+    <!-- <UiButton
       label="Filter"
       iconPos="left"
       @click-handler="drawer = true"
       icon="mdi-filter"
       btnStyle="primary-outline"
-    />
+    /> -->
     <v-navigation-drawer
-      class="z-50"
+      class="z-100"
       fixed
       v-model="drawer"
       :width="filterWidth"
@@ -60,11 +60,33 @@
 </template>
 
 <script>
+import vClickOutside from 'v-click-outside'
+
 export default {
+  props: {
+    isOpen: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  directives: {
+    clickOutside: vClickOutside.directive,
+  },
   data() {
     return {
       drawer: false,
+      initialClick: false,
     }
+  },
+  watch: {
+    isOpen() {
+      this.drawer = this.isOpen
+    },
+    drawer() {
+      if (!this.drawer) {
+        this.$store.commit('filter/setIsOpen', false)
+      }
+    },
   },
   computed: {
     filterWidth() {
@@ -121,9 +143,6 @@ export default {
     },
   },
   methods: {
-    changeFilterState() {
-      this.filterIsOpen = !this.filterIsOpen
-    },
     setWeight(min, max) {
       this.$store.dispatch('report/setWeightFilter', {
         min,
@@ -145,6 +164,9 @@ export default {
     clearAllFilters() {
       this.$store.commit('report/clearAllFilters')
     },
+  },
+  mounted() {
+    console.log('filter mounted')
   },
 }
 </script>
