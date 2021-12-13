@@ -338,11 +338,15 @@ export default {
         !this.userSpotsForSelectedLocation.includes(
           this.report.location.spot
         ) &&
-        this.report.general.spot !== null
+        this.report.location.spot !== null
       ) {
         if (this.$store.state.location.locationId != null) {
           await this.insertNewUserLocationSpot(this.report.location.spot)
         }
+      }
+
+      if (this.report.general.weight != null) {
+        this.report.general.weight = parseFloat(this.report.general.weight)
       }
 
       this.$store.dispatch('report/addReport', {
@@ -499,7 +503,7 @@ export default {
             !this.userSpotsForSelectedLocation.includes(
               this.report.location.spot
             ) &&
-            this.report.general.spot !== null
+            this.report.location.spot !== null
           ) {
             this.insertNewUserLocationSpot(this.report.location.spot, doc.id)
           }

@@ -6,6 +6,7 @@ const firebaseErrors = {
   'auth/wrong-password':
     'Verkeerd paswoord of de gebruiker heeft geen paswoord.',
   'auth/too-many-requests': 'Teveel foutieve pogingen, probeer later opnieuw.',
+  'auth/weak-password': 'Paswoord moet minstens 6 karakters lang zijn.',
 }
 
 export default firebaseErrors

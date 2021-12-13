@@ -25,11 +25,13 @@ export const actions = {
             context.commit('loading/setIsLoading', false)
           } else {
             console.log('Does not exist.')
+            context.commit('loading/setIsLoading', false)
           }
         })
     } else {
       console.log('no auth user')
       this.app.context.redirect('/login')
+      context.commit('loading/setIsLoading', false)
     }
   },
   setAppLoaded(context, payload) {

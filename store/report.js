@@ -96,6 +96,7 @@ export const actions = {
   },
   async addReport(context, payload) {
     const report = payload.report
+
     const router = payload.router
     this.$fire.firestore
       .collection('report')
@@ -117,6 +118,9 @@ export const actions = {
   },
   async updateReport(context, payload) {
     const report = payload.report
+
+    console.log(report)
+
     const id = payload.id
     const router = payload.router
     this.$fire.firestore
@@ -161,22 +165,25 @@ export const actions = {
     let weightRangeMin = context.state.weightRange.min
     let weightRangeMax = context.state.weightRange.max
 
-    if (
-      reports.length > 0 &&
-      reports[0].report.report.general.weight !== null
-    ) {
-      weightRangeMin = reports[0].report.report.general.weight
-      weightRangeMax = reports[0].report.report.general.weight
-    }
+    let isFirstMinMaxSet = false
 
     reports.forEach((report) => {
-      if (report.report.report.general.weight !== null) {
-        if (report.report.report.general.weight < weightRangeMin) {
-          weightRangeMin = parseInt(report.report.report.general.weight) - 1
+      const weight = report.report.report.general.weight
+
+      if (weight !== null) {
+        if (!isFirstMinMaxSet) {
+          weightRangeMin = parseFloat(weight) - 1
+          weightRangeMax = parseFloat(weight) + 1
+
+          isFirstMinMaxSet = true
         }
 
-        if (report.report.report.general.weight > weightRangeMax) {
-          weightRangeMax = parseInt(report.report.report.general.weight) + 1
+        if (parseFloat(weight) < weightRangeMin) {
+          weightRangeMin = parseInt(weight) - 1
+        }
+
+        if (parseFloat(weight) > weightRangeMax) {
+          weightRangeMax = parseInt(weight) + 1
         }
       }
     })
@@ -185,6 +192,7 @@ export const actions = {
       min: parseInt(weightRangeMin),
       max: parseInt(weightRangeMax),
     }
+
     context.commit('setWeightRange', weightRange)
     context.commit('setWeightFilter', weightRange)
     context.dispatch('loading/setIsLoading', false, { root: true })
@@ -240,7 +248,8 @@ export const actions = {
 export const getters = {
   allReports(state) {
     let reports = state.reports
-    if (reports !== null) {
+
+    if (reports !== null && reports.length > 1) {
       reports = filterReports(state, reports)
       reports = sortReports(state, reports)
     }

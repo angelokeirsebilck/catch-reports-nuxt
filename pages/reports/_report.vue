@@ -7,7 +7,6 @@
       align-middle
       w-full
       pa-5
-      min-h-full
       relative
     "
   >

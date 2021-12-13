@@ -29,6 +29,7 @@ module.exports = {
     },
     colors: {
       primary: {
+        extraLight: '#dcfce7',
         lighter1: '#6EE7B7',
         default: '#10B981',
       },

@@ -19,7 +19,15 @@
     />
     <img
       v-else
-      class="h-full"
+      class="
+        md:group-hover:scale-105
+        transform
+        transition-all
+        z-0
+        block
+        object-cover
+        w-full
+      "
       src="/catch-reports-logo.svg"
       alt="Catch Reports Logo"
     />
@@ -28,7 +36,7 @@
         report.location.place || report.location.spot || report.general.weight
       "
       class="
-        opacity-70
+        opacity-90
         md:opacity-0 md:group-hover:opacity-100
         absolute
         bottom-0
@@ -66,7 +74,7 @@ export default {
   computed: {
     noImageClass() {
       if (this.report.general.media.length == 0) {
-        return 'flex justify-center items-center bg-primary-default opacity-20 h-full p-8'
+        return 'flex justify-center items-center bg-primary-extraLight h-full p-8'
       }
       return ''
     },

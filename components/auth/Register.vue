@@ -65,14 +65,11 @@
           <UiButton label="Registreer" btnStyle="primary" />
         </div>
       </v-form>
-      <p
-        v-if="error != null"
-        :class="[errorStyle, 'mt-4 text-left max-w-md mx-auto']"
-      >
+      <p v-if="error != null" :class="[errorStyle, 'my-3 text-left d mx-auto']">
         {{ error }}
       </p>
     </ValidationObserver>
-    <div class="max-w-md mx-auto mt-8">
+    <div :class="['mx-auto', error ? ' mt-0' : ' mt-8']">
       <p>
         Al geregistreerd?
         <v-hover v-slot="{ hover }">
@@ -105,7 +102,7 @@ export default {
         password: '',
         confirm: '',
       },
-      errorStyle: 'text-red-600',
+      errorStyle: 'text-error',
       error: null,
     }
   },
@@ -139,6 +136,7 @@ export default {
           })
         }
       } catch (error) {
+        console.log(error.code)
         this.error = FirebaseErrors[error.code] || error.message
         this.$store.commit('loading/setIsLoading', false)
       }

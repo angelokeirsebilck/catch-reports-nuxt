@@ -72,6 +72,7 @@
       </template>
     </UiDialog>
     <nuxt-img
+      v-if="reportComputed.general.media[0]"
       :src="reportComputed.general.media[0].url"
       sizes="sm:580px md:711px lg:800px"
       format="webp"
@@ -85,22 +86,31 @@
       "
       data-fancybox="gallery"
     />
-    <nuxt-img
-      v-for="(img, index) in hiddenFancyBoxImages"
-      :key="index"
-      :src="img.url"
-      sizes="sm:100vw md:100vw lg:100vw"
-      format="webp"
-      class="
-        md:group-hover:scale-105
-        transform
-        transition-all
-        z-0
-        invisible
-        hidden
-      "
-      data-fancybox="gallery"
+    <img
+      v-else
+      class="h-full w-full bg-primary-extraLight"
+      src="/catch-reports-logo.svg"
+      alt="Catch Reports Logo"
     />
+    <div class="" v-if="hiddenFancyBoxImages.length > 0">
+      <nuxt-img
+        v-for="(img, index) in hiddenFancyBoxImages"
+        :key="index"
+        :src="img.url"
+        sizes="sm:100vw md:100vw lg:100vw"
+        format="webp"
+        class="
+          md:group-hover:scale-105
+          transform
+          transition-all
+          z-0
+          invisible
+          hidden
+        "
+        data-fancybox="gallery"
+      />
+    </div>
+
     <div class="text-md font-medium mb-2 mt-3">Algemeen</div>
     <ReportValue
       name="Datum"

@@ -15,15 +15,31 @@ export default {
       sortKg: 'desc',
       sortDate: 'desc',
       value: 'Gewicht oplopend',
-      sortList: [
-        { text: 'Gewicht hoog-laag', icon: 'mdi-sort-descending' },
-        { text: 'Gewicht laag-hoog', icon: 'mdi-sort-ascending' },
-        { text: 'Datum nieuw-oud', icon: 'mdi-sort-calendar-ascending' },
-        { text: 'Datum oud-nieuw', icon: 'mdi-sort-calendar-descending' },
-      ],
     }
   },
-  computed: {},
+  computed: {
+    sortList() {
+      if (
+        this.$store.state.report.filters.weight.min !==
+          this.$store.state.report.filters.weight.max &&
+        this.$store.state.report.filters.weight.max -
+          this.$store.state.report.filters.weight.min !=
+          2
+      ) {
+        return [
+          { text: 'Gewicht hoog-laag', icon: 'mdi-sort-descending' },
+          { text: 'Gewicht laag-hoog', icon: 'mdi-sort-ascending' },
+          { text: 'Datum nieuw-oud', icon: 'mdi-sort-calendar-ascending' },
+          { text: 'Datum oud-nieuw', icon: 'mdi-sort-calendar-descending' },
+        ]
+      } else {
+        return [
+          { text: 'Datum nieuw-oud', icon: 'mdi-sort-calendar-ascending' },
+          { text: 'Datum oud-nieuw', icon: 'mdi-sort-calendar-descending' },
+        ]
+      }
+    },
+  },
   methods: {
     changeSortCriteria(value) {
       this.$store.commit('report/setSortCriteria', value)

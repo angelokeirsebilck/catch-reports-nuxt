@@ -15,6 +15,7 @@
     >
       <v-list class="px-5 pt-8">
         <UiRangeSlider
+          v-show="showWeightFilter"
           @change-values="setWeight"
           :min="weightMin"
           :max="weightMax"
@@ -22,24 +23,28 @@
           :range="[weightMinFilter, weightMaxFilter]"
         />
         <UiCombobox
+          v-if="yearList.length > 1"
           :list="yearList"
           @change-values="setYear"
           label="Jaar"
           :value="yearsFilter"
         />
         <UiCombobox
+          v-if="locationList.length > 0"
           :list="locationList"
           @change-values="setLocation"
           label="Plaats"
           :value="locationsFilter"
         />
         <UiCombobox
+          v-if="baitList.length > 0"
           :list="baitList"
           @change-values="setBait"
           label="Aas"
           :value="baitsFilter"
         />
         <UiCombobox
+          v-if="techniqueList.length > 0"
           :list="techniqueList"
           @change-values="setTechnique"
           label="Techniek"
@@ -140,6 +145,15 @@ export default {
     },
     showClearFilterButton() {
       return this.$store.getters['report/showClearFilterButton']
+    },
+    showWeightFilter() {
+      if (
+        this.$store.state.report.filters.weight.min !=
+        this.$store.state.report.filters.weight.max
+      )
+        return true
+
+      return false
     },
   },
   methods: {
