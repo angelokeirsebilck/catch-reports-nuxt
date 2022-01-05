@@ -7,11 +7,13 @@ When registered and logged in you are able to add/edit/delete catch reports and 
 ## Images
 
 <p float="left">
-  <img src="https://github.com/angelokeirsebilck/nutreasy-client/blob/develop/images/nutreasy1.jpeg" />
-<img src="https://github.com/angelokeirsebilck/nutreasy-client/blob/develop/images/nutreasy2.jpeg" />
-<img src="https://github.com/angelokeirsebilck/nutreasy-client/blob/develop/images/nutreasy5.jpeg" />
-<img src="https://github.com/angelokeirsebilck/nutreasy-client/blob/develop/images/nutreasy3.jpeg" />
-<img src="https://github.com/angelokeirsebilck/nutreasy-client/blob/develop/images/nutreasy4.jpeg" />
+  <img src="https://github.com/angelokeirsebilck/catch-reports-nuxt/blob/staging/images/login.jpg" />
+  <img src="https://github.com/angelokeirsebilck/catch-reports-nuxt/blob/staging/images/register.jpg" />
+  <img src="https://github.com/angelokeirsebilck/catch-reports-nuxt/blob/staging/images/index.jpg" />
+  <img src="https://github.com/angelokeirsebilck/catch-reports-nuxt/blob/staging/images/filter.jpg" />
+  <img src="https://github.com/angelokeirsebilck/catch-reports-nuxt/blob/staging/images/delete.jpg" />
+  <img src="https://github.com/angelokeirsebilck/catch-reports-nuxt/blob/staging/images/edit.jpg" />
+
 </p>
 
 ## Used Technologies
