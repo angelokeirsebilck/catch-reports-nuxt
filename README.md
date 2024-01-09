@@ -4,8 +4,6 @@ Vue/Nuxt application to log catch reports using Firebase as backend.
 
 When registered and logged in you are able to add/edit/delete catch reports and filter/sort on certain criteria.
 
-https://catch-reports.herokuapp.com/ (Hosted on free heroku plan, takes about 20 seconds to boot)
-
 ## Used Technologies
 
 - Vue
